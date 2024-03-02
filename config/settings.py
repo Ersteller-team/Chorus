@@ -22,6 +22,7 @@ except ImportError:
 # Application definition
 
 INSTALLED_APPS = [
+    'SNS',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
