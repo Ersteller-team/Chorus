@@ -1,0 +1,29 @@
+{% extends "SNS/layout.html" %}
+{% load static %}
+{% block title %}ホムンクルス / Tele{{block.super}}{% endblock %}
+{% block main %}
+    <div class="song">
+        <img src="{% static 'SNS/album-cover.jpg' %}" alt="ホムンクルス" class="song-coverart">
+        <h1 class="song-detail song-title">ホムンクルス</h1>
+        <p class="song-detail song-artist-album-follower">Tele / ホムンクルス</p>
+        <form action="" method="post">
+            <input class="song-detail song-follow" type="submit" value="楽曲をフォロー">
+        </form>
+        <p class="song-detail song-artist-album-follower">123,456人がフォロー</p>
+        <iframe class="song-preview" src="https://open.spotify.com/embed/track/7KYZQay4ok85FWx1e5SweU?utm_source=generator" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+    </div>
+    <div class="post">
+        <div class="post-top">
+            <h2 class="post-title">投稿(1)</h2>
+            <span class="post-add" href="{% url 'SNS:home' %}"><i class="fa-solid fa-plus"></i></span>
+            <a href="{% url 'SNS:home' %}" class="post-sort">新しい順</a>
+        </div>
+        <div class="post-detail">
+            <div class="post-user">
+                <span class="nav-icon"><img src="{% static 'SNS/prof-icon.jpg' %}" class="profile-icon"></span>
+                <p class="post-username">Soma</p>
+            </div>
+            <p class="post-text">この曲は最高です！</p>
+        </div>
+    </div>
+{% endblock %}
