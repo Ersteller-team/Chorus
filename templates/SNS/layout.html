@@ -6,9 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}｜Music SNS{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'SNS/styles.css' %}">
+    <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
 </head>
 <body>
-    <nav>{% block navbar %}{% endblock %}</nav>
+    <nav>
+        <div id="menu">
+            <span class="nav-icon"><i class="fa-solid fa-house"></i></span>
+            <span class="nav-icon"><i class="fa-solid fa-earth-asia"></i></span>
+            <span class="nav-icon"><i class="fa-solid fa-plus"></i></span>
+            <span class="nav-icon"><i class="fa-brands fa-spotify"></i></span>
+            <span class="nav-icon"><img class="profile-icon" src="{% static 'SNS/sample.jpg' %}"></span>
+        </div>
+    </nav>
     <main>{% block main %}{% endblock %}</main>
 </body>
 </html>
