@@ -5,21 +5,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}｜Music SNS{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'SNS/styles.css' %}">
-    <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
-    <link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
-    <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="{% static 'SNS/styles-sp.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'SNS/styles-pc.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'fontawesomefree/css/fontawesome.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'fontawesomefree/css/brands.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'fontawesomefree/css/solid.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'fontawesomefree/css/all.min.css' %}">
 </head>
 <body>
     <nav>
         <div id="menu">
-            <span class="nav-icon"><i class="fa-solid fa-house"></i></span>
-            <span class="nav-icon"><i class="fa-solid fa-earth-asia"></i></span>
-            <span class="nav-icon"><i class="fa-solid fa-plus"></i></span>
-            <span class="nav-icon"><i class="fa-brands fa-spotify"></i></span>
-            <span class="nav-icon"><img class="profile-icon" src="{% static 'SNS/sample.jpg' %}"></span>
+            <span class="nav-icon" href="{% url 'SNS:home' %}"><i class="nav-icon-i fa-solid fa-house"></i><span class="nav-text">Home</span></span>
+            <span class="nav-icon" href="{% url 'SNS:home' %}"><i class="nav-icon-i fa-solid fa-earth-asia"></i><span class="nav-text">Search</span></span>
+            <span class="nav-icon" href="{% url 'SNS:home' %}"><i class="nav-icon-i fa-solid fa-plus"></i><span class="nav-text">Post</span></span>
+            <span class="nav-icon" href="{% url 'SNS:home' %}"><i class="nav-icon-i fa-brands fa-spotify"></i><span class="nav-text">Spotify</span></span>
+            <span class="nav-icon" href="{% url 'SNS:home' %}"><img class="nav-icon-i profile-icon" src="{% static 'SNS/prof-icon.jpg' %}"><span class="nav-text nav-profile">Profile</span></span>
         </div>
     </nav>
-    <main>{% block main %}{% endblock %}</main>
+    <main>
+        {% block main %}
+        {% endblock %}
+    </main>
 </body>
 </html>

@@ -1,0 +1,61 @@
+{% extends "SNS/layout.html" %}
+{% load static %}
+{% block title %}ホムンクルス / Tele{{block.super}}{% endblock %}
+{% block main %}
+    <div class="song-page">
+        <div class="song">
+            <span class="song-details">
+                <img src="{% static 'SNS/album-cover.jpg' %}" alt="ホムンクルス" class="song-coverart">
+                <h1 class="song-detail song-title">ホムンクルス</h1>
+                <p class="song-detail song-artist-album song-artist-album-follower">Tele / ホムンクルス</p>
+                <form action="" method="post">
+                    <input class="song-detail song-follow" type="submit" value="楽曲をフォロー">
+                </form>
+                <!-- <form action="" method="post">
+                    <input class="song-detail song-follow" type="submit" value="フォロー解除">
+                </form> -->
+                <p class="song-detail song-follower song-artist-album-follower">123,456人がフォロー</p>
+            </span>
+            <iframe class="song-preview" src="https://open.spotify.com/embed/track/7KYZQay4ok85FWx1e5SweU?utm_source=generator" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        </div>
+        <div class="post">
+            <div class="post-top">
+                <h2 class="post-title">投稿(1)</h2>
+                <span class="post-add" href="{% url 'SNS:home' %}"><i class="fa-solid fa-plus"></i></span>
+                <a href="{% url 'SNS:home' %}" class="post-sort">新しい順</a>
+            </div>
+            <div class="post-detail">
+                <div class="post-user">
+                    <img src="{% static 'SNS/prof-icon.jpg' %}" class="profile-icon post-profile-icon">
+                    <a href="{% url 'SNS:home' %}" class="post-username">Soma</a>
+                    <p class="post-date">2024年3月4日 18時07分</p>
+                </div>
+                <p class="post-text">この曲は最高です！</p>
+                <div class="post-reaction">
+                    <span class="post-reaction-like"><i class="fa-regular fa-thumbs-up"></i> <span class="post-reaction-value">123</span></span>
+                    <!-- <span class="post-reaction-like"><i class="fa-solid fa-thumbs-up"></i> <span class="post-reaction-value">123</span></span> -->
+                    <span class="post-reaction-comment"><i class="fa-regular fa-comment"></i> <span class="post-reaction-value">123</span></span>
+                    <span class="post-reaction-report"><i class="fa-solid fa-bullhorn"></i></span>
+                    <span class="post-reaction-edit"><i class="fa-regular fa-edit"></i></span>
+                    <span class="post-reaction-delete"><i class="fa-regular fa-trash-can"></i></span>
+                </div>
+            </div>
+            <div class="post-detail-reply">
+                <div class="post-user">
+                    <img src="{% static 'SNS/prof-icon.jpg' %}" class="profile-icon post-profile-icon">
+                    <a href="{% url 'SNS:home' %}" class="post-username">Soma</a>
+                    <p class="post-date">2024年3月4日 18時07分</p>
+                </div>
+                <p class="post-text">この曲は最高です！</p>
+                <div class="post-reaction">
+                    <span class="post-reaction-like"><i class="fa-regular fa-thumbs-up"></i> <span class="post-reaction-value">123</span></span>
+                    <!-- <span class="post-reaction-like"><i class="fa-solid fa-thumbs-up"></i> <span class="post-reaction-value">123</span></span> -->
+                    <span class="post-reaction-comment"><i class="fa-regular fa-comment"></i> <span class="post-reaction-value">123</span></span>
+                    <span class="post-reaction-report"><i class="fa-solid fa-bullhorn"></i></span>
+                    <span class="post-reaction-edit"><i class="fa-regular fa-edit"></i></span>
+                    <span class="post-reaction-delete"><i class="fa-regular fa-trash-can"></i></span>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

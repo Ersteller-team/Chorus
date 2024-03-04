@@ -1,3 +1,11 @@
 {% extends "SNS/layout.html" %}
 {% load static %}
 {% block title %}Home{{block.super}}{% endblock %}
+{% block main %}
+    <div class="item">
+        <img src="{% static 'SNS/album-cover.jpg' %}" alt="ホムンクルス">
+        <div class="item-gradation"></div>
+        <a class="item-name item-title" href="https://open.spotify.com/intl-ja/track/7KYZQay4ok85FWx1e5SweU?si=ede4c89f18f244dc">ホムンクルス</a>
+        <a class="item-name item-artist-album" href="https://open.spotify.com/intl-ja/track/7KYZQay4ok85FWx1e5SweU?si=ede4c89f18f244dc">Tele / ホムンクルス</a>
+    </div>
+{% endblock %}
