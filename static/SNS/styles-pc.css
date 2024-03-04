@@ -120,8 +120,8 @@
         padding-top: 150px;
     }
 
-    .song-page {
-        margin: 50px 50px 0 50px;
+    .main {
+        margin: 50px;
     }
 
     .song-details {
@@ -276,6 +276,84 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         text-decoration: none;
+    }
+
+    .new-post-content {
+        width: 95%;
+        height: 250px;
+        margin: 0 auto;
+        overflow-y: scroll;
+        top: 50vw;
+        color: black;
+        font-weight: bold;
+        font-size: 20px;
+        border-radius: 25px;
+        border: solid 1px gray;
+        padding: 20px;
+    }
+
+    .new-post-submit {
+        height: 50px;
+        top: 260px;
+        width: fit-content;
+        color: black;
+        font-weight: bold;
+        font-size: 20px;
+        border-radius: 25px;
+        border: none;
+        background-color: #efefef;
+        margin-top: 20px;
+        padding: 0 40px;
+    }
+
+    .new-post-song {
+        width: 90%;
+        display: inline-flex;
+        justify-content: space-evenly;
+        margin: 0 5%;
+    }
+
+    .new-post-song #img i {
+        font-size: 100px;
+        padding: 55px 20px;
+    }
+
+    .new-post-song-img {
+        width: 200px;
+        height: 200px;
+    }
+
+    .new-post-song-title-artist {
+        text-align: left;
+        width: min(100%, 600px);
+        margin-top: 40px;
+    }
+
+    .new-post-song-title {
+        font-size: 25px;
+        margin-bottom: 10px;
+    }
+
+    .new-post-song-artist {
+        font-size: 20px;
+        margin-top: 10px;
+    }
+
+    .new-post-song-select {
+        height: 39px;
+        width: 100px;
+        color: black;
+        font-weight: bold;
+        font-size: 15px;
+        border-radius: 20px;
+        border: none;
+        background-color: #efefef;
+        margin-top: 6vw;
+        padding: 0 20px;
+    }
+
+    .new-post-submit:disabled {
+        color: lightgray;
     }
 
 }
