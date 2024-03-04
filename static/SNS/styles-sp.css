@@ -12,6 +12,12 @@ a {
     color: black;
 }
 
+.dont-new-line {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 @media screen and (max-width: 834px) {
 
     .pc {
@@ -249,6 +255,91 @@ a {
         text-overflow: ellipsis;
         white-space: nowrap;
         text-decoration: none;
+    }
+
+    .new-post-title {
+        text-align: center;
+    }
+
+    .new-post-content-parents {
+        text-align: center;
+    }
+
+    .new-post-content {
+        width: calc(95% - 40px);
+        height: 250px;
+        margin: 0 auto;
+        overflow-y: scroll;
+        top: 50vw;
+        color: black;
+        font-weight: bold;
+        font-size: 20px;
+        border-radius: 25px;
+        border: solid 1px gray;
+        padding: 20px;
+    }
+
+    .new-post-submit {
+        height: 39px;
+        width: fit-content;
+        color: black;
+        font-weight: bold;
+        font-size: 15px;
+        border-radius: 20px;
+        border: none;
+        background-color: #efefef;
+        margin-top: 7vw;
+        padding: 0 20px;
+    }
+
+    .new-post-song {
+        width: 90%;
+        display: inline-flex;
+        justify-content: space-evenly;
+        margin: 0 5%;
+    }
+
+    .new-post-song #img i {
+        font-size: 10vw;
+        padding: 6vw 2vw;
+    }
+
+    .new-post-song-img {
+        width: 20vw;
+        height: 20vw;
+    }
+
+    .new-post-song-title-artist {
+        text-align: left;
+        width: min(100%, 58vw);
+        margin-top: 1vw;
+    }
+
+    .new-post-song-title {
+        font-size: 4vw;
+        margin-bottom: 1vw;
+    }
+
+    .new-post-song-artist {
+        font-size: 3vw;
+        margin-top: 1vw;
+    }
+
+    .new-post-song-select {
+        height: 39px;
+        width: 100px;
+        color: black;
+        font-weight: bold;
+        font-size: 15px;
+        border-radius: 20px;
+        border: none;
+        background-color: #efefef;
+        margin-top: 6vw;
+        padding: 0 20px;
+    }
+
+    .new-post-submit:disabled {
+        color: lightgray;
     }
 
 }
