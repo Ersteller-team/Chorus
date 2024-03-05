@@ -1,0 +1,359 @@
+@import url('//use.fontawesome.com/releases/v6.5.1/css/all.css');
+
+
+@media screen and (min-width: 834px) {
+
+    .sp {
+        display: none;
+    }
+
+    p {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        text-decoration: none;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        display: inline-block;
+    }
+
+    html {
+        height: 100%;
+        width: 100%;
+        display: inline-block;
+    }
+
+    nav {
+        width: 300px;
+        height: 100%;
+        font-size: 30px;
+    }
+
+    nav img {
+        border-radius: 10px;
+        transform: translateY(6px);
+    }
+
+    nav #menu {
+        padding-top: 100px;
+        height: 100vh;
+        overflow-y: hidden;
+        border-right: solid 1px gray;
+    }
+
+    nav .nav-icon {
+        margin-left: 50px;
+        width: calc(100% - 50px);
+        height: 70px;
+        font-size: 30px;
+        display: block;
+    }
+
+    nav .nav-icon-i {
+        width: 35px;
+        height: 35px;
+        text-align: center;
+    }
+
+    .nav-profile {
+        top: 0px;
+    }
+
+    nav .nav-text {
+        margin-left: 20px;
+    }
+
+    main {
+        width: calc(100% - 300px);
+        height: 100vh;
+        margin-left: 300px;
+        position: fixed;
+        top: 0;
+        display: inline-block;
+        overflow-x: hidden;
+        overflow-y: scroll;
+    }
+
+    .item {
+        display: inline-flex;
+        width: 180px;
+        height: 180px;
+        margin: 10px;
+    }
+
+    .item img {
+        width: 100%;
+        height: 100%;
+    }
+
+    .item-gradation {
+        position: absolute;
+        height: 180px;
+        width: 180px;
+        background: linear-gradient(180deg, rgba(217, 217, 217, 0.00) 50%, #000 100%);
+    }
+
+    .item-name {
+        position: absolute;
+        color: white;
+        margin: 0;
+        width: 160px;
+        padding-left: 10px;
+        padding-right: 10px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        text-decoration: none;
+    }
+
+    .item-title {
+        font-size: 20px;
+        padding-top: 115px;
+    }
+
+    .item-artist-album {
+        font-size: 14px;
+        padding-top: 150px;
+    }
+
+    .main {
+        margin: 50px;
+    }
+
+    .song-details {
+        display: inline-block;
+        width: calc(100% - 300px - 50px);
+        margin-top: 50px;
+    }
+
+    .song-coverart {
+        width: 300px;
+        height: 300px;
+    }
+
+    .song-detail {
+        position: absolute;
+        left: 350px;
+        width: calc(100% - 450px);
+        padding-left: 50px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .song-title {
+        top: 75px;
+        font-size: 50px;
+    }
+
+    .song-artist-album {
+        top: 175px;
+        font-size: 20px;
+    }
+
+    .song-follow {
+        height: 50px;
+        top: 260px;
+        width: fit-content;
+        color: black;
+        font-weight: bold;
+        font-size: 20px;
+        border-radius: 25px;
+        border: none;
+        background-color: #efefef;
+        margin-left: 50px;
+        padding: 0 40px;
+    }
+
+    .song-follower {
+        top: 325px;
+    }
+
+    .song-preview {
+        border-radius: 12px; 
+        margin-top: 50px; 
+        width: min(90%, 600px);
+        margin-left: calc(50% - min(90%, 600px) / 2);
+    }
+
+    .post {
+        margin: 50px;
+    }
+
+    .post-top {
+        width: 100%;
+        display: inline-flex;
+    }
+
+    .post-title {
+        font-size: 30px;
+        width: fit-content;
+        margin: 0 7px;
+        float: left;
+    }
+
+    .post-add {
+        font-size: 30px;
+        float: left;
+    }
+
+    .post-sort {
+        font-size: 15px;
+        right: 100px;
+        color: gray;
+        position: absolute;
+        height: fit-content;
+        vertical-align: middle;
+        margin: 10px 0;
+    }
+
+    .post-detail {
+        margin-top: 10px;
+        margin-bottom: 0;
+        padding: 15px;
+        border-radius: 20px;
+        border: solid 1px gray;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        text-decoration: none;
+    }
+
+    .post-user {
+        width: calc(100%);
+        display: inline-flex;
+    }
+
+    .post-username {
+        font-size: 20px;
+        width: 100%;
+        height: fit-content;
+        margin: 8px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        text-decoration: none;
+    }
+
+    .post-date {
+        color: gray;
+        width: 50%;
+        display: block;
+        text-align: right;
+    }
+
+    .post-text {
+        font-size: 18px;
+    }
+
+    .post-profile-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 15px;
+        aspect-ratio: 1;
+    }
+
+    .post-reaction {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+        margin-top: 10px;
+    }
+
+    .post-detail-reply {
+        margin-top: 10px;
+        margin-bottom: 0;
+        margin-left: 50px;
+        padding: 15px;
+        border-radius: 20px;
+        border: solid 1px gray;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        text-decoration: none;
+    }
+
+    .new-post-content {
+        width: 95%;
+        height: 250px;
+        margin: 0 auto;
+        overflow-y: scroll;
+        top: 50vw;
+        color: black;
+        font-weight: bold;
+        font-size: 20px;
+        border-radius: 25px;
+        border: solid 1px gray;
+        padding: 20px;
+    }
+
+    .new-post-submit {
+        height: 50px;
+        top: 260px;
+        width: fit-content;
+        color: black;
+        font-weight: bold;
+        font-size: 20px;
+        border-radius: 25px;
+        border: none;
+        background-color: #efefef;
+        margin-top: 20px;
+        padding: 0 40px;
+    }
+
+    .new-post-song {
+        width: 90%;
+        display: inline-flex;
+        justify-content: space-evenly;
+        margin: 0 5%;
+    }
+
+    .new-post-song #img i {
+        font-size: 100px;
+        padding: 55px 20px;
+    }
+
+    .new-post-song-img {
+        width: 200px;
+        height: 200px;
+    }
+
+    .new-post-song-title-artist {
+        text-align: left;
+        width: min(100%, 600px);
+        margin-top: 40px;
+    }
+
+    .new-post-song-title {
+        font-size: 25px;
+        margin-bottom: 10px;
+    }
+
+    .new-post-song-artist {
+        font-size: 20px;
+        margin-top: 10px;
+    }
+
+    .new-post-song-select {
+        height: 39px;
+        width: 100px;
+        color: black;
+        font-weight: bold;
+        font-size: 15px;
+        border-radius: 20px;
+        border: none;
+        background-color: #efefef;
+        margin-top: 6vw;
+        padding: 0 20px;
+    }
+
+    .new-post-submit:disabled {
+        color: lightgray;
+    }
+
+}

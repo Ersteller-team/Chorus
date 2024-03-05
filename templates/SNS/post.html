@@ -1,0 +1,32 @@
+{% extends "SNS/layout.html" %}
+{% load static %}
+{% block title %}新規投稿{{block.super}}{% endblock %}
+{% block main %}
+    <div class="main">
+        <div id="new-post-text">
+            <h1 class="new-post-title">新規投稿</h1>
+            <form method="post">
+                <div class="new-post-content-parents">
+                    <textarea name="content" class="new-post-content" placeholder="投稿内容を入力..."></textarea>
+                    <input type="hidden" name="song" value="None" id="post-id">
+                    <div class="new-post-song">
+                        {% comment %} <span id="img">
+                            <i class="fa-solid fa-compact-disc"></i>
+                        </span> {% endcomment %}
+                        <img src="{% static 'SNS/album-cover.jpg' %}" id="img" class="new-post-song-img">
+                        <div class="new-post-song-title-artist">
+                            <p id="title" class="new-post-song-title dont-new-line">ホムンクルス</p>
+                            <p id="artist" class="new-post-song-artist dont-new-line">Tele / ホムンクルス</p>
+                        </div>
+                        <button class="new-post-song-select" type="button" onclick="switchDisplay('song');">選択</button>
+                    </div>
+                    <input type="submit" value="投稿" id="submit" class="new-post-submit" disabled>
+                </div>
+            </form>
+        </div>
+        <div id="new-post-song-list">
+
+        </div>
+        <script src="{% static 'SNS/pick-song.js' %}"></script>
+    </div>
+{% endblock %}

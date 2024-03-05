@@ -1,0 +1,345 @@
+@import url('//use.fontawesome.com/releases/v6.5.1/css/all.css');
+
+
+body {
+    margin: 0;
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+.dont-new-line {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@media screen and (max-width: 834px) {
+
+    .pc {
+        display: none;
+    }
+
+    nav {
+        position: fixed;
+        width: 100%;
+        bottom: 0px;
+        height: 50px;
+        border-top: solid 1px gray;
+        text-align: center;
+        z-index: 100;
+    }
+
+    #menu {
+        width: 100%;
+        height: 25px;
+        position: fixed;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+        padding-top: 7px;
+    }
+
+    .nav-icon {
+        width: 25px;
+        height: 25px;
+        font-size: 25px;
+    }
+
+    .nav-icon i {
+        transform: translateY(-3px);
+    }
+
+    .nav-icon img {
+        width: 25px;
+        height: 25px;
+        border-radius: 8px;
+    }
+
+    .nav-text {
+        display: none;
+    }
+
+    main {
+        height: calc(100% - 50px);
+        width: 100vw;
+        overflow-y: scroll;
+        display: inline-block;
+        position: fixed;
+        top: 0;
+        justify-content: space-evenly;
+    }
+
+    .item {
+        display: inline-flex;
+        padding-left: 1vw;
+    }
+
+    .item img {
+        width: calc(31vw);
+        margin: 0;
+    }
+
+    .item-gradation {
+        position: absolute;
+        height: 31vw;
+        width: 31vw;
+        background: linear-gradient(180deg, rgba(217, 217, 217, 0.00) 50%, #000 100%);
+    }
+
+    .item-name {
+        position: absolute;
+        color: white;
+        margin: 0;
+        width: calc(31vw - 20px);
+        padding-left: 10px;
+        padding-right: 10px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        text-decoration: none;
+    }
+
+    .item-title {
+        font-size: 3.5vw;
+        padding-top: 20vw;
+    }
+
+    .item-artist-album {
+        font-size: 2.5vw;
+        padding-top: 25.5vw;
+    }
+
+    .song {
+        text-align: center;
+        margin-top: 50px;
+    }
+
+    .song-coverart {
+        width: 154px;
+        height: 154px;
+    }
+
+    .song-detail {
+        margin-top: 10px;
+        margin-bottom: 0;
+        padding: 0 10vw;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        text-decoration: none;
+    }
+
+    .song-title {
+        font-size: 20px;
+    }
+
+    .song-artist-album-follower {
+        font-size: 10px;
+    }
+
+    .song-preview {
+        border-radius: 12px; 
+        margin-top: 7vw; 
+        width: 95vw;
+    }
+
+    .song-follow {
+        height: 39px;
+        width: fit-content;
+        color: black;
+        font-weight: bold;
+        font-size: 15px;
+        border-radius: 20px;
+        border: none;
+        background-color: #efefef;
+        margin-top: 7vw;
+    }
+
+    .post {
+        margin: 7vw 2vw;
+    }
+
+    .post-top {
+        width: 100%;
+        display: inline-flex;
+    }
+
+    .post-title {
+        font-size: 20px;
+        width: fit-content;
+        margin: 0 7px;
+        float: left;
+    }
+
+    .post-add {
+        font-size: 20px;
+        float: left;
+    }
+
+    .post-sort {
+        font-size: 10px;
+        right: 5vw;
+        color: gray;
+        position: absolute;
+        height: fit-content;
+        vertical-align: middle;
+        margin: 7.5px 0;
+    }
+
+    .post-detail {
+        margin-top: 10px;
+        margin-bottom: 0;
+        padding: 15px;
+        border-radius: 20px;
+        border: solid 1px gray;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        text-decoration: none;
+    }
+
+    .post-user {
+        width: 100%;
+        display: inline-flex;
+    }
+
+    .post-username {
+        font-size: 14px;
+        width: 100%;
+        height: fit-content;
+        margin: 14px;
+    }
+
+    .post-date {
+        font-size: 11px;
+        margin: 15px 0 0 0;
+        color: gray;
+    }
+
+    .post-text {
+        font-size: 15px;
+    }
+
+    .post-profile-icon {
+        width: 50px;
+        height: 50px;
+        aspect-ratio: 1;
+        border-radius: 15px;
+    }
+
+    .post-reaction {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+        margin-top: 10px;
+    }
+
+    .post-reaction-value {
+        font-size: 10px;
+    }
+
+    .post-detail-reply {
+        margin-top: 10px;
+        margin-bottom: 0;
+        margin-left: 30px;
+        padding: 15px;
+        border-radius: 20px;
+        border: solid 1px gray;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        text-decoration: none;
+    }
+
+    .new-post-title {
+        text-align: center;
+    }
+
+    .new-post-content-parents {
+        text-align: center;
+    }
+
+    .new-post-content {
+        width: calc(95% - 40px);
+        height: 250px;
+        margin: 0 auto;
+        overflow-y: scroll;
+        top: 50vw;
+        color: black;
+        font-weight: bold;
+        font-size: 20px;
+        border-radius: 25px;
+        border: solid 1px gray;
+        padding: 20px;
+    }
+
+    .new-post-submit {
+        height: 39px;
+        width: fit-content;
+        color: black;
+        font-weight: bold;
+        font-size: 15px;
+        border-radius: 20px;
+        border: none;
+        background-color: #efefef;
+        margin-top: 7vw;
+        padding: 0 20px;
+    }
+
+    .new-post-song {
+        width: 90%;
+        display: inline-flex;
+        justify-content: space-evenly;
+        margin: 0 5%;
+    }
+
+    .new-post-song #img i {
+        font-size: 10vw;
+        padding: 6vw 2vw;
+    }
+
+    .new-post-song-img {
+        width: 20vw;
+        height: 20vw;
+    }
+
+    .new-post-song-title-artist {
+        text-align: left;
+        width: min(100%, 58vw);
+        margin-top: 1vw;
+    }
+
+    .new-post-song-title {
+        font-size: 4vw;
+        margin-bottom: 1vw;
+    }
+
+    .new-post-song-artist {
+        font-size: 3vw;
+        margin-top: 1vw;
+    }
+
+    .new-post-song-select {
+        height: 39px;
+        width: 100px;
+        color: black;
+        font-weight: bold;
+        font-size: 15px;
+        border-radius: 20px;
+        border: none;
+        background-color: #efefef;
+        margin-top: 6vw;
+        padding: 0 20px;
+    }
+
+    .new-post-submit:disabled {
+        color: lightgray;
+    }
+
+}

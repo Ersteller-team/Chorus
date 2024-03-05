@@ -1,5 +1,8 @@
 from django.urls import path
+from . import views
+
+app_name = 'SNS'
 
 urlpatterns = [
-#    path('','SNS.urls'), 
+    path('home/', views.home, name='home'), 
 ]
