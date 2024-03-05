@@ -1,10 +1,11 @@
 #------------ Import Libraries ------------
 import requests
 import json
+from .spotify_secret import *
 
 # Set your Spotify API credentials
-client_id = "61bebe8bbccb4fc98273891e63515d08"
-client_secret = "0faa7e3297264bd98e1dd2f8c8cd48b7"
+client_id = SPOTIFY_CLIENT_ID
+client_secret = SPOTIFY_CLIENT_SECRET
 
 #------------ Get Access Token ---------------
 # Define the endpoint for obtaining an access token
