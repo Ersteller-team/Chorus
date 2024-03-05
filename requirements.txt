@@ -1,3 +1,13 @@
 asgiref==3.7.2
+async-timeout==4.0.3
+certifi==2024.2.2
+charset-normalizer==3.3.2
 Django==5.0.2
+fontawesomefree==6.5.1
+idna==3.6
+redis==5.0.2
+requests==2.31.0
+six==1.16.0
+spotipy==2.23.0
 sqlparse==0.4.4
+urllib3==2.2.1
