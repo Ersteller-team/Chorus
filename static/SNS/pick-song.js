@@ -19,7 +19,7 @@ function switchDisplay(id) {
 }
 
 function setSong(song_title, song_id, song_artist, song_album) {
-    document.getElementById("title").value = song_name;
+    document.getElementById("title").value = song_title;
     document.getElementById("img").src = song_id;
     document.getElementById("post-id").value = song_id;
     document.getElementById("artist").value = song_artist + " / " + song_album;
