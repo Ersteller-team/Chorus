@@ -2,6 +2,7 @@
 import requests
 from .spotify_secret import *
 from .spotify_url import *
+from .spotify_constants import *
 
 
 # ------------ Get No Authentication Access Token ---------------
@@ -27,12 +28,17 @@ def get_access_token_no_authentication() -> dict[str, str]:
 
 # ------------ Pick Data from JSON ---------------
 
-def pick_data_from_json(get_data: dict) -> dict[str, any]:
+def pick_song_data_from_json(data: dict, type: str) -> dict[str, any]:
     
     response_data: dict[str, any] = {}
     response_song_data: list = []
     
-    for item in get_data['tracks']['items']:
+    if type == SPOTIFY_SEARCH_FOR_ITEM:
+        pick_data = data['tracks']['items']
+    elif type == SPOTIFY_GET_TRACK:
+        pick_data = [data]
+    
+    for item in pick_data:
         
         song_data: dict = {
             'id': item['id'],
@@ -65,11 +71,13 @@ def pick_data_from_json(get_data: dict) -> dict[str, any]:
         
         response_song_data.append(track)
     
-    if response_song_data == []:
-        response_data = { 'status': {'about': 'Failure', 'total': len(response_song_data)}, 'data': response_song_data }
+    data_length = len(response_song_data)
+    
+    if response_song_data == 0:
+        response_data = { 'status': { 'success': False, 'total': 0, 'once': False }, 'data': response_song_data }
     
     else:
-        response_data = { 'status': {'about': 'Success', 'total': len(response_song_data)}, 'data': response_song_data }
+        response_data = { 'status': { 'success': True, 'total': data_length, 'once': data_length == 1 }, 'data': response_song_data }
     
     return response_data
 
@@ -89,7 +97,7 @@ def search_query(type: list[str], query: str, limit: int = 20, offset: int = 0) 
     
     response: dict[str, any] = requests.get(SPOTIFY_SEARCH_TEXT_URL, params=search_params, headers=headers).json()
     
-    pick_data: dict[str, any] = pick_data_from_json(response)
+    pick_data: dict[str, any] = pick_song_data_from_json(response, SPOTIFY_SEARCH_FOR_ITEM)
     
     return pick_data
 
@@ -117,6 +125,6 @@ def search_track_id(track_id: str) -> dict[str, any]:
     
     response: dict = requests.get(SPOTIFY_SEARCH_TRACK_ID_URL + track_id, headers=headers).json()
     
-    pick_data: dict = pick_data_from_json(response)
+    pick_data: dict = pick_song_data_from_json(response, SPOTIFY_GET_TRACK)
     
     return pick_data
