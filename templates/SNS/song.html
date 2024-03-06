@@ -1,22 +1,24 @@
 {% extends "SNS/layout.html" %}
 {% load static %}
-{% block title %}ホムンクルス / Tele{{block.super}}{% endblock %}
+{% block title %}{{ response.data.0.song.name }} / {% for artist in response.data.0.artist %}{{ artist.name }}{% endfor %}{{ block.super }}{% endblock %}
 {% block main %}
     <div class="main">
         <div class="song">
             <span class="song-details">
-                <img src="{% static 'SNS/album-cover.jpg' %}" alt="ホムンクルス" class="song-coverart">
-                <h1 class="song-detail song-title">ホムンクルス</h1>
-                <p class="song-detail song-artist-album song-artist-album-follower">Tele / ホムンクルス</p>
+                <img src="{{ response.data.0.album.image }}" alt="{{ response.data.0.song.name }}" class="song-coverart">
+                <h1 class="song-detail song-title">{{ response.data.0.song.name }}</h1>
+                <p class="song-detail song-artist-album song-artist-album-follower">{% for artist in response.data.0.artist %}{{ artist.name }}{% endfor %} / {{ response.data.0.album.name }}</p>
                 <form action="" method="post">
+                    <input type="hidden" name="song_id" value="{{ response.data.0.song.id }}">
                     <input class="song-detail song-follow" type="submit" value="楽曲をフォロー">
                 </form>
                 <!-- <form action="" method="post">
+                    <input type="hidden" name="song_id" value="{{ response.data.0.song.id }}">
                     <input class="song-detail song-follow" type="submit" value="フォロー解除">
                 </form> -->
                 <p class="song-detail song-follower song-artist-album-follower">123,456人がフォロー</p>
             </span>
-            <iframe class="song-preview" src="https://open.spotify.com/embed/track/7KYZQay4ok85FWx1e5SweU?utm_source=generator" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+            <iframe class="song-preview" src="https://open.spotify.com/embed/track/{{ response.data.0.song.id }}?utm_source=generator" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
         </div>
         <div class="post">
             <div class="post-top">

@@ -2,7 +2,7 @@
 import requests
 from .spotify_secret import *
 from .spotify_url import *
-from .spotify_constants import *
+from .constants import *
 
 
 # ------------ Get No Authentication Access Token ---------------

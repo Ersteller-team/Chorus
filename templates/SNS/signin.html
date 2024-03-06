@@ -1,0 +1,27 @@
+{% extends "SNS/layout.html" %}
+{% load static %}
+{% block title %}Sign Up{{ block.super }}{% endblock %}
+{% block main %}
+<div class="main">
+    <div id="new-post-text">
+        <h1 class="new-post-title">Sign In</h1>
+        <div class="signup-form">
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-content">
+                    <h2>Username</h2>
+                    <input type="text" id="id_username" name="username" autofocus autocomplate="username" required onchange="check_username();check_required();" maxlength="150" aria-describedby="id_username_helptext">
+                </div>
+                <div class="form-content">
+                    <h2>Password</h2>
+                    <input type="password" id="id_password" name="password" autocomplate="new-password" required onchange="check_password();check_required();">
+                </div>
+                <div class="signup-parent">
+                    <p>アカウントをお持ちでない場合 <u><a href="{% url 'SNS:signup' %}">Sign Up</a></u></p>
+                    <input type="submit" value="Sign In" id="signup" class="new-post-submit">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
