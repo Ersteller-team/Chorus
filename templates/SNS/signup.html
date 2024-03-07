@@ -1,0 +1,45 @@
+{% extends "SNS/layout.html" %}
+{% load static %}
+{% block title %}Sign Up{{ block.super }}{% endblock %}
+{% block main %}
+<div class="main">
+    <div id="new-post-text">
+        <h1 class="new-post-title">Sign Up</h1>
+        <div class="signup-form">
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-content">
+                    <h2>Username</h2>
+                    <input type="text" id="id_username" name="username" autofocus autocomplate="username" required onchange="check_username();check_required();" maxlength="150" aria-describedby="id_username_helptext">
+                    <div class="form-message">英数字・記号が使用できます。</div>
+                    <div class="form-message">他のユーザーと同じユーザーネームは使用できません。</div>
+                    <div class="form-message" id="username-check">ユーザーネームを入力してください。</div>
+                </div>
+                <div class="form-content">
+                    <h2>Email</h2>
+                    <input type="email" id="id_email" name="email" autocomplate="email" maxlength="254" required onchange="check_required();">
+                </div>
+                <div class="form-content">
+                    <h2>Password</h2>
+                    <input type="password" id="id_password" name="password" autocomplate="new-password" required onchange="check_password();check_required();">
+                    <div class="form-message">8文字以上の英数字が必要です。</div>
+                    <div class="form-message" id="pass-length"></div>
+                </div>
+                <div class="form-content">
+                    <h2>Password Again</h2>
+                    <input type="password" id="password2" name="password" autocomplate="new-password" required onchange="check_password();check_required();">
+                    <div class="form-message" id="password-check">パスワードを入力してください。</div>
+                </div>
+                <input type="hidden" name="icon" maxlength="200" id="id_icon" value="https://teraddition.com">
+                <textarea name="description" cols="40" rows="10" maxlength="300" id="id_description" value="None" style="display: none;">None</textarea>
+                <input type="hidden" name="spotify_id" maxlength="100" id="id_spotify_id" value="None">
+                <div class="signup-parent">
+                    <p>アカウントをお持ちの場合 <u><a href="{% url 'SNS:signin' %}">Sign In</a></u></p>
+                    <input type="submit" value="Sign Up" id="signup" class="new-post-submit" disabled>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src={% static 'SNS/signup.js' %}></script>
+</div>
+{% endblock %}

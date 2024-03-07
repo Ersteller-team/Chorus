@@ -356,4 +356,26 @@
         color: lightgray;
     }
 
+    .signup-form h2 {
+        margin-top: 50px;
+        margin-bottom: 10px;
+    }
+
+    .signup-form input:not([type="submit"]) {
+        width: calc(300px);
+        height: 40px;
+        margin: 10px 0;
+        padding: 0 10px;
+        border-radius: 5px;
+        border: solid 1px gray;
+    }
+
+    .signup-parent p {
+        margin-top: 50px;
+    }
+
+    .signup-parent input {
+        margin: 30px 0;
+    }
+
 }
