@@ -6,7 +6,7 @@
     <div id="new-post-text">
         <h1 class="new-post-title">Sign Up</h1>
         <div class="signup-form">
-            <form method="post">
+            <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="form-content">
                     <h2>Username</h2>
@@ -23,12 +23,16 @@
                     <h2>Password</h2>
                     <input type="password" id="id_password" name="password" autocomplate="new-password" required onchange="check_password();check_required();">
                     <div class="form-message">8文字以上の英数字が必要です。</div>
-                    <div class="form-message" id="pass-length"></div>
+                    <div class="form-message" id="pass-length">パスワードを入力してください。</div>
                 </div>
                 <div class="form-content">
                     <h2>Password Again</h2>
                     <input type="password" id="password2" name="password" autocomplate="new-password" required onchange="check_password();check_required();">
                     <div class="form-message" id="password-check">パスワードを入力してください。</div>
+                </div>
+                <div class="form-content">
+                    <h2>Icon</h2>
+                    <input type="file" name="icon">
                 </div>
                 <input type="hidden" name="icon" maxlength="200" id="id_icon" value="https://teraddition.com">
                 <textarea name="description" cols="40" rows="10" maxlength="300" id="id_description" value="None" style="display: none;">None</textarea>

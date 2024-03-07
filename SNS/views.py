@@ -1,21 +1,22 @@
 from django.shortcuts import render, redirect
-from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
+from django.http import JsonResponse, HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic import TemplateView
 from django.middleware.csrf import get_token
-from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
+import boto3, random, string
 from . import spotify_data
 from .constants import *
 from .models import *
 from .forms import AddProfileForm, ProfileForm
 
+
 # Create your views here.
+
 def home(request):
     
-    response = spotify_data.search_track_id('7KYZQay4ok85FWx1e5SweU')
-    
-    return JsonResponse({ 'response': response })
+    return render(request, 'SNS/home.html')
 
 
 def song(request, track_id):
@@ -36,22 +37,36 @@ def song(request, track_id):
         
         return JsonResponse({ 'response': response })
 
-
-def signup(request):
+@login_required
+def post(request):
     
     if request.method == 'GET':
-        return render(request, 'SNS/signup.html')
+        return render(request, 'SNS/post.html')
     
     elif request.method == 'POST':
+        song_id = request.POST['song']
+        response = spotify_data.search_track_id(song_id)
+        PostData.objects.create(
+            user_id = request.user.id,
+            contents = request.POST['content'],
+            music_id = song_id,
+            song_name = response['data'][0]['song']['name'],
+            artist_name = response['data'][0]['artist'][0]['name'],
+            album_name = response['data'][0]['album']['name'],
+            image = response['data'][0]['album']['image'],
+        )
+        return redirect(HOST_URL + '/home/')
+
+
+def search_song(request):
+    
+    if request.method == 'GET':
         
-        username = request.POST['username']
-        password = request.POST['password']
-        email = request.POST['email']
+        if "query" in request.GET:
         
-        user = ProfileData(username=username, password=password, email=email)
-        user.save()
+            response = spotify_data.search_query([SPOTIFY_SEARCH_TYPE_TRACK], request.GET['query'], 20, request.GET['offset'])
         
-        return JsonResponse({ 'response': 'success' })
+            return JsonResponse({ 'response': response })
 
 
 def username_check(request):
@@ -69,6 +84,24 @@ def username_check(request):
             return JsonResponse({ 'exists': True })
 
 
+def randomname(n):
+   randlst = [random.choice(string.ascii_letters + string.digits) for i in range(n)]
+   return ''.join(randlst)
+
+
+def upload_file_to_s3(file):
+    s3 = boto3.client('s3',
+                      aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                      aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+                      region_name=settings.AWS_S3_REGION_NAME)
+    bucket_name = settings.AWS_STORAGE_BUCKET_NAME
+    extension = file.name.split('.')[-1]
+    file_name = f"{randomname(50)}.{extension}"
+    s3.upload_fileobj(file, bucket_name, file_name)
+    s3_link = f"https://{bucket_name}.s3.amazonaws.com/{file_name}"
+    return s3_link
+
+
 class  AccountRegistration(TemplateView):
 
     def __init__(self):
@@ -83,71 +116,52 @@ class  AccountRegistration(TemplateView):
         self.params["add_account_form"] = AddProfileForm()
         self.params["AccountCreate"] = False
         return render(request,"SNS/signup.html",context=self.params)
-
+    
     def post(self,request):
         self.params["account_form"] = ProfileForm(data=request.POST)
         self.params["add_account_form"] = AddProfileForm(data=request.POST)
-
         if self.params["account_form"].is_valid() and self.params["add_account_form"].is_valid():
             account = self.params["account_form"].save()
             account.set_password(account.password)
             account.save()
-
             add_account = self.params["add_account_form"].save(commit=False)
             add_account.user = account
-
-            if 'account_image' in request.FILES:
-                add_account.account_image = request.FILES['account_image']
-
+            if 'icon' in request.FILES:
+                file = request.FILES['icon']
+                s3_link = upload_file_to_s3(file)
+                add_account.icon = s3_link
             add_account.save()
-
             self.params["AccountCreate"] = True
-
         else:
             print(self.params["account_form"].errors)
-
-        return render(request,"SNS/signup.html",context=self.params)
+        return redirect(HOST_URL + '/signin/')
 
 
 def Signin(request):
-    # POST
     if request.method == 'POST':
-        # フォーム入力のユーザーID・パスワード取得
         username = request.POST.get('username')
         password = request.POST.get('password')
-
-        # Djangoの認証機能
         user = authenticate(username=username, password=password)
-
-        # ユーザー認証
         if user:
-            #ユーザーアクティベート判定
             if user.is_active:
-                # ログイン
                 login(request, user)
                 if "next" in request.GET:
                     next = request.GET["next"]
                     return redirect(HOST_URL + next)
-                return redirect('SNS/home')
+                return redirect(HOST_URL + '/home/')
             else:
-                # アカウント利用不可
                 return HttpResponse("アカウントが有効ではありません")
-        # ユーザー認証失敗
         else:
             return HttpResponse("ログインIDまたはパスワードが間違っています")
-    # GET
     else:
         return render(request, 'SNS/signin.html')
 
 
-#ログアウト
 @login_required
 def Signout(request):
     logout(request)
-    # ログイン画面遷移
-    return HttpResponseRedirect(reverse('Login'))
+    return redirect(HOST_URL + '/signin/')
 
 
 def csrf_token(request):
-    return JsonResponse({ 'token': get_token(request) })
-
+    return JsonResponse({ "token": get_token(request) })

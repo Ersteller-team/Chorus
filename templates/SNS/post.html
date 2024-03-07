@@ -1,31 +1,51 @@
 {% extends "SNS/layout.html" %}
 {% load static %}
-{% block title %}新規投稿{{block.super}}{% endblock %}
+{% block title %}New Post{{block.super}}{% endblock %}
 {% block main %}
     <div class="main">
         <div id="new-post-text">
-            <h1 class="new-post-title">新規投稿</h1>
+            <h1 class="new-post-title">New Post</h1>
             <form method="post">
+                {% csrf_token %}
                 <div class="new-post-content-parents">
-                    <textarea name="content" class="new-post-content" placeholder="投稿内容を入力..."></textarea>
-                    <input type="hidden" name="song" value="None" id="post-id">
+                    <textarea name="content" class="new-post-content" placeholder="投稿内容を入力..." id="detail" oninput="post_check();" maxlength="500"></textarea>
+                    <input type="hidden" name="song" value="" id="song-id">
                     <div class="new-post-song">
-                        {% comment %} <span id="img">
-                            <i class="fa-solid fa-compact-disc"></i>
-                        </span> {% endcomment %}
-                        <img src="{% static 'SNS/album-cover.jpg' %}" id="img" class="new-post-song-img">
-                        <div class="new-post-song-title-artist">
-                            <p id="title" class="new-post-song-title dont-new-line">ホムンクルス</p>
-                            <p id="artist" class="new-post-song-artist dont-new-line">Tele / ホムンクルス</p>
-                        </div>
-                        <button class="new-post-song-select" type="button" onclick="switchDisplay('song');">選択</button>
+                        <table id="selected-table">
+                            <tr>
+                                <td><span id="img"><i class="fa-solid fa-compact-disc"></i></span></td>
+                                <td>
+                                    <div class="new-post-song-title-artist">
+                                        <p id="no-select">楽曲未選択</p>
+                                        <p id="title" class="new-post-song-title dont-new-line"></p>
+                                        <p id="artist" class="new-post-song-artist dont-new-line"></p>
+                                    </div>
+                                </td>
+                                <td><button class="new-post-song-select" type="button" onclick="switchDisplay('song');">選択</button></td>
+                            </tr>
+                        </table>
                     </div>
                     <input type="submit" value="投稿" id="submit" class="new-post-submit" disabled>
                 </div>
             </form>
         </div>
         <div id="new-post-song-list">
-
+            <div class="song-close">
+                <a class="close" onclick="switchDisplay('text');"><i class="fa-solid fa-xmark"></i></a>
+            </div>
+            <div class="search-box">
+                <div class="search-bar">
+                    <input type="text" id="search-text" class="song-search" placeholder="検索..." onchange="searchSong(0);">
+                    <div id="search-result">
+                        曲を検索してください
+                    </div>
+                </div>
+                <table id="search-result-table">
+                </table>
+                <div class="center">
+                    <button id="more-button" class="new-post-song-select" type="button" onclick="searchSong(1);">More</button>
+                </div>
+            </div>
         </div>
         <script src="{% static 'SNS/pick-song.js' %}"></script>
     </div>

@@ -29,11 +29,11 @@ function check_username() {
         if (request.status === 200) {
             if (request.response['exists'] == false) {
                 username_status = true;
-                username_check.innerHTML = 'このUsernameは使用可能です。';
+                username_check.innerHTML = 'このユーザーネームは使用可能です。';
                 username_check.style.color = 'green';
             } else {
                 username_status = false;
-                username_check.innerHTML = 'このUsernameは使用できません。';
+                username_check.innerHTML = 'このユーザーネームは使用できません。';
                 username_check.style.color = 'red';
             }
         } else {

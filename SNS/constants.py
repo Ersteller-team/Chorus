@@ -16,4 +16,4 @@ SPOTIFY_SEARCH_FOR_ITEM = 'search_for_item'
 SPOTIFY_GET_TRACK = 'get_track'
 
 
-HOST_URL = 'http://127.0.0.1:8000'
+HOST_URL = 'http://localhost:8000'

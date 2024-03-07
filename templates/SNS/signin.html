@@ -8,6 +8,7 @@
         <div class="signup-form">
             <form method="post">
                 {% csrf_token %}
+                {% csrf_token %}
                 <div class="form-content">
                     <h2>Username</h2>
                     <input type="text" id="id_username" name="username" autofocus autocomplate="username" required onchange="check_username();check_required();" maxlength="150" aria-describedby="id_username_helptext">

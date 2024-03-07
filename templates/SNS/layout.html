@@ -15,16 +15,16 @@
 <body>
     <nav>
         <div id="menu">
-            <span class="nav-icon" href="{% url 'SNS:home' %}"><i class="nav-icon-i fa-solid fa-house"></i><span class="nav-text">Home</span></span>
-            <span class="nav-icon" href="{% url 'SNS:home' %}"><i class="nav-icon-i fa-solid fa-earth-asia"></i><span class="nav-text">Search</span></span>
-            <span class="nav-icon" href="{% url 'SNS:home' %}"><i class="nav-icon-i fa-solid fa-plus"></i><span class="nav-text">Post</span></span>
-            <span class="nav-icon" href="{% url 'SNS:home' %}"><i class="nav-icon-i fa-brands fa-spotify"></i><span class="nav-text">Spotify</span></span>
-            {% if user.is_authenticated%}
-                <span class="nav-icon" href="{% url 'SNS:home' %}"><img class="nav-icon-i profile-icon" src="{% static 'SNS/prof-icon.jpg' %}"><span class="nav-text nav-profile">Profile</span></span>
-                <span class="nav-icon" href="{% url 'SNS:signout' %}"><i class="fa-solid fa-arrow-right-from-bracket"></i><span class="nav-text">Sign Out</span></span>
+            <a href="{% url 'SNS:home' %}"><span class="nav-icon"><i class="nav-icon-i fa-solid fa-house"></i><span class="nav-text">Home</span></span></a>
+            <a href="{% url 'SNS:home' %}"><span class="nav-icon"><i class="nav-icon-i fa-solid fa-earth-asia"></i><span class="nav-text">Search</span></span></a>
+            <a href="{% url 'SNS:post' %}"><span class="nav-icon"><i class="nav-icon-i fa-solid fa-plus"></i><span class="nav-text">Post</span></span></a>
+            <a href="{% url 'SNS:home' %}"><span class="nav-icon"><i class="nav-icon-i fa-brands fa-spotify"></i><span class="nav-text">Spotify</span></span></a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'SNS:home' %}"><span class="nav-icon"><img class="nav-icon-i profile-icon" src="{{ icon }}"><span class="nav-text nav-profile">Profile</span></span></a>
+                <a href="{% url 'SNS:signout' %}"><span class="nav-icon"><i class="fa-solid fa-arrow-right-from-bracket"></i><span class="nav-text">Sign Out</span></span></a>
             {% else %}
-                <span class="nav-icon" href="{% url 'SNS:signin' %}"><i class="fa-solid fa-arrow-right-to-bracket"></i><span class="nav-text">Sign In</span></span>
-                <span class="nav-icon" href="{% url 'SNS:signup' %}"><i class="fa-solid fa-user-plus"></i><span class="nav-text">Sign Up</span></span>
+                <a href="{% url 'SNS:signin' %}"><span class="nav-icon"><i class="fa-solid fa-arrow-right-to-bracket"></i><span class="nav-text">Sign In</span></span></a>
+                <a href="{% url 'SNS:signup' %}"><span class="nav-icon"><i class="fa-solid fa-user-plus"></i><span class="nav-text">Sign Up</span></span></a>
             {% endif %}
         </div>
     </nav>
