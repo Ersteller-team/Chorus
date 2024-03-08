@@ -20,8 +20,12 @@ class UserFollowData(models.Model):
 class PostData(models.Model):
     user_id = models.IntegerField()
     contents = models.TextField(max_length=500)
-    music = models.CharField(max_length=100)
-    original_post_id = models.IntegerField()
+    music_id = models.CharField(max_length=100)
+    original_post_id = models.IntegerField(null=True)
+    song_name = models.CharField(max_length=100)
+    artist_name = models.CharField(max_length=100)
+    album_name = models.CharField(max_length=100)
+    image = models.URLField()
 
 class GoodData(models.Model):
     post_id = models.IntegerField()
