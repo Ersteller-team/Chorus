@@ -7,8 +7,11 @@ charset-normalizer==3.3.2
 Django==5.0.2
 django-storages==1.14.2
 fontawesomefree==6.5.1
+gunicorn==21.2.0
 idna==3.6
 jmespath==1.0.1
+packaging==23.2
+psycopg2==2.9.9
 python-dateutil==2.9.0.post0
 redis==5.0.2
 requests==2.31.0
