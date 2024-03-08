@@ -1,6 +1,51 @@
 @import url('//use.fontawesome.com/releases/v6.5.1/css/all.css');
 
 
+.post-reaction-button {
+    padding: 0;
+	line-height: 1;
+	background: none;
+	border: none;
+	font-size: 16px;
+	cursor: pointer;
+}
+
+.post-reaction-button::before {
+    font-style: normal;
+	font-variant: normal;
+	text-rendering: auto;
+	-webkit-font-smoothing: antialiased;
+    font-family: "Font Awesome 5 Free"; 
+}
+
+.like::before {
+    font-weight: 400;
+	content: '\f164';
+}
+
+.nolike::before {
+    font-weight: 900;
+    content: '\f164';
+}
+
+.comment::before {
+    content: '\f075';
+}
+
+.report::before {
+    font-weight: 900;
+    content: '\f0a1';
+}
+
+.edit::before {
+    content: '\f044';
+}
+
+.delete::before {
+    content: '\f2ed';
+}
+
+
 @media screen and (min-width: 834px) {
 
     .sp {

@@ -16,7 +16,21 @@ from .forms import AddProfileForm, ProfileForm
 
 def home(request):
     
-    return render(request, 'SNS/home.html')
+    if request.method == 'GET':
+        
+        if 'loaded_items' in request.GET:
+            
+            loaded_items = request.GET['loaded_items']
+            
+            items = PostData.objects.all().order_by('-created_at')[int(loaded_items):int(loaded_items) + 100]
+            
+            return JsonResponse({ 'response': items })
+        
+        items = PostData.objects.all().order_by('-created_at')[:100]
+        
+        return render(request, 'SNS/home.html', { 
+            'items': items, 
+        })
 
 
 def song(request, track_id):
@@ -27,15 +41,67 @@ def song(request, track_id):
         
         if response['status']['once'] == True:
             
+            follow = MusicFollowData.objects.filter(user_id=request.user.id, music_id=track_id).exists()
+            
+            followers = MusicFollowData.objects.filter(music_id=track_id).count()
+            
+            posts_data = PostData.objects.all().filter(music_id=track_id).order_by('-created_at')
+            
+            posts = []
+            
+            for post in posts_data:
+                
+                replies_data = PostData.objects.all().filter(original_post_id=post.id).order_by('-created_at')
+                
+                replies = []
+                
+                for reply in replies_data:
+                    
+                    user = User.objects.get(id=reply.user_id)
+                    
+                    replies.append({
+                        'user_icon': ProfileData.objects.get(user_id=reply.user_id).icon,
+                        'username': user.username,
+                        'date': reply.created_at,
+                        'text': reply.contents,
+                    })
+                
+                user = User.objects.get(id=post.user_id)
+                
+                posts.append({
+                    'user_icon': ProfileData.objects.get(user_id=post.user_id).icon,
+                    'username': user.username,
+                    'date': post.created_at,
+                    'text': post.contents,
+                    'replies': replies,
+                })
+            
             return render(request, 'SNS/song.html', { 
                 'response': response, 
+                'follow': follow,
+                'followers': followers,
+                'posts': posts,
             })
     
     elif request.method == 'POST':
         
-        response = spotify_data.search_track_id(track_id)
+        follow = MusicFollowData.objects.filter(user_id=request.user.id, music_id=track_id).exists()
         
-        return JsonResponse({ 'response': response })
+        if follow:
+            MusicFollowData.objects.filter(user_id=request.user.id, music_id=track_id).delete()
+        
+        else:
+            MusicFollowData.objects.create(
+                user_id = request.user.id,
+                music_id = track_id,
+            )
+        
+        return redirect(HOST_URL + '/song/' + track_id)
+
+
+def profile(request, username):
+    return render(request, 'SNS/profile.html')
+
 
 @login_required
 def post(request):
