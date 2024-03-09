@@ -5,7 +5,10 @@ from django.views.generic import TemplateView
 from django.middleware.csrf import get_token
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
+from django.db.models import Q
 import boto3, random, string
+from io import BytesIO
+from PIL import Image
 from . import spotify_data
 from .constants import *
 from .models import *
@@ -13,6 +16,9 @@ from .forms import AddProfileForm, ProfileForm
 
 
 # Create your views here.
+
+def api_test(request):
+    return JsonResponse({ 'response': spotify_data.search_query([SPOTIFY_SEARCH_TYPE_TRACK], '米津玄師')})
 
 def home(request):
     
@@ -26,7 +32,8 @@ def home(request):
             
             return JsonResponse({ 'response': items })
         
-        items = PostData.objects.all().order_by('-created_at')[:100]
+        latest_music_ids = PostData.objects.values('music_id').annotate(latest_created_at=models.Max('created_at'))
+        items = PostData.objects.filter(created_at__in=latest_music_ids.values('latest_created_at'))[:100]
         
         return render(request, 'SNS/home.html', { 
             'items': items, 
@@ -45,13 +52,13 @@ def song(request, track_id):
             
             followers = MusicFollowData.objects.filter(music_id=track_id).count()
             
-            posts_data = PostData.objects.all().filter(music_id=track_id).order_by('-created_at')
+            posts_data = PostData.objects.filter(Q(music_id=track_id) & Q(original_post_id=None)).order_by('-created_at')
             
             posts = []
             
             for post in posts_data:
                 
-                replies_data = PostData.objects.all().filter(original_post_id=post.id).order_by('-created_at')
+                replies_data = PostData.objects.filter(original_post_id=post.id).order_by('-created_at')
                 
                 replies = []
                 
@@ -60,18 +67,26 @@ def song(request, track_id):
                     user = User.objects.get(id=reply.user_id)
                     
                     replies.append({
+                        'id': reply.id,
                         'user_icon': ProfileData.objects.get(user_id=reply.user_id).icon,
                         'username': user.username,
+                        'user_id': post.user_id,
                         'date': reply.created_at,
+                        'good': GoodData.objects.filter(post_id=reply.id).count(),
+                        'good_status': GoodData.objects.filter(post_id=reply.id, gooded_id=request.user.id).exists(),
                         'text': reply.contents,
                     })
                 
                 user = User.objects.get(id=post.user_id)
                 
                 posts.append({
+                    'id': post.id,
                     'user_icon': ProfileData.objects.get(user_id=post.user_id).icon,
                     'username': user.username,
+                    'user_id': post.user_id,
                     'date': post.created_at,
+                    'good': GoodData.objects.filter(post_id=post.id).count(),
+                    'good_status': GoodData.objects.filter(post_id=post.id, gooded_id=request.user.id).exists(),
                     'text': post.contents,
                     'replies': replies,
                 })
@@ -107,21 +122,128 @@ def profile(request, username):
 def post(request):
     
     if request.method == 'GET':
-        return render(request, 'SNS/post.html')
+        
+        song_data = {
+            'song': {'name': '', 'id': '', 'preview': ''},
+            'artist': [{'name': '', 'id': ''}],
+            'album': {'name': '', 'id': '', 'image': ''}
+        }
+        
+        song = False
+        post = None
+        reply_to = None
+        
+        if 'song_id' in request.GET:
+            
+            song_data = spotify_data.search_track_id(request.GET['song_id'])['data'][0]
+            song = True
+        
+        if 'post_id' in request.GET:
+            post_check = PostData.objects.get(id=request.GET['post_id'])
+            if post_check.user_id == request.user.id:
+                post = post_check
+        
+        if 'reply_to' in request.GET:
+            reply_to = request.GET['reply_to']
+        
+        return render(request, 'SNS/post.html', {
+            'song': song_data,
+            'response': song,
+            'post': post,
+            'reply_to': reply_to,
+        })
     
     elif request.method == 'POST':
         song_id = request.POST['song']
         response = spotify_data.search_track_id(song_id)
-        PostData.objects.create(
-            user_id = request.user.id,
-            contents = request.POST['content'],
-            music_id = song_id,
-            song_name = response['data'][0]['song']['name'],
-            artist_name = response['data'][0]['artist'][0]['name'],
-            album_name = response['data'][0]['album']['name'],
-            image = response['data'][0]['album']['image'],
-        )
-        return redirect(HOST_URL + '/home/')
+        
+        if 'post_id' in request.POST:
+            post = PostData.objects.get(id=request.POST['post_id'])
+            if post.user_id == request.user.id:
+                post.contents = request.POST['content']
+                post.save()
+        
+        else:
+            if 'reply_to' in request.POST:
+                reply_to = request.POST['reply_to']
+            else:
+                reply_to = None
+            
+            PostData.objects.create(
+                user_id = request.user.id,
+                contents = request.POST['content'],
+                music_id = song_id,
+                song_name = response['data'][0]['song']['name'],
+                artist_name = response['data'][0]['artist'][0]['name'],
+                album_name = response['data'][0]['album']['name'],
+                image = response['data'][0]['album']['image'],
+                original_post_id = reply_to,
+            )
+        
+        return redirect(HOST_URL + '/song/' + song_id)
+
+def postGood(request):
+    
+    if request.method == 'GET':
+        
+        if 'status' in request.GET and 'post_id' in request.GET and 'user_id' in request.GET and 'posted_id' in request.GET:
+            
+            status = request.GET['status']
+            post_id = request.GET['post_id']
+            user_id = request.GET['user_id']
+            posted_id = request.GET['posted_id']
+            
+            if status == 'good':
+                GoodData.objects.create(
+                    gooded_id = int(user_id),
+                    post_id = int(post_id),
+                    admin_id = int(posted_id),
+                )
+            else:
+                GoodData.objects.filter(gooded_id=user_id, post_id=post_id).delete()
+            
+            count = GoodData.objects.filter(post_id=post_id).count()
+            
+            return JsonResponse({
+                'success': True,
+                'create': status == 'good',
+                'count': count,
+            })
+        
+        else:
+            print("in")
+            return JsonResponse({ 'status': 'failed' })
+    
+    else:
+        return JsonResponse({ 'status': 'failed' })
+
+@login_required
+def postDelete(request):
+    
+    if request.method == 'GET':
+        
+        if 'user' in request.GET and 'post_id' in request.GET:
+            
+            user = int(request.GET['user'])
+            post_id = int(request.GET['post_id'])
+            
+            post = PostData.objects.get(id=post_id)
+            
+            if post.user_id == user:
+                
+                post.delete()
+                
+                PostData.objects.filter(original_post_id=post_id).delete()
+                
+                goods = GoodData.objects.all()
+                
+                for good in goods:
+                    if not PostData.objects.filter(id=good.post_id).exists():
+                        good.delete()
+                
+                return JsonResponse({ 'success': True })
+    
+    return JsonResponse({ 'success': False })
 
 
 def search_song(request):
@@ -151,11 +273,19 @@ def username_check(request):
 
 
 def randomname(n):
-   randlst = [random.choice(string.ascii_letters + string.digits) for i in range(n)]
-   return ''.join(randlst)
+    randlst = [random.choice(string.ascii_letters + string.digits) for i in range(n)]
+    return ''.join(randlst)
 
 
 def upload_file_to_s3(file):
+    im = Image.open(file)
+    image_size = im.size
+    if image_size[0] <= image_size[1]:
+        min_size = image_size[0]
+    else:
+        min_size = image_size[1]
+    im_crop = im.crop((image_size[1] / 2 - min_size / 2, image_size[0] / 2 - min_size / 2, image_size[1] / 2 + min_size / 2, image_size[0] / 2 + min_size / 2))
+    im_resize = im_crop.resize((200, 200))
     s3 = boto3.client('s3',
                       aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
                       aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
@@ -163,7 +293,10 @@ def upload_file_to_s3(file):
     bucket_name = settings.AWS_STORAGE_BUCKET_NAME
     extension = file.name.split('.')[-1]
     file_name = f"{randomname(50)}.{extension}"
-    s3.upload_fileobj(file, bucket_name, file_name)
+    byte_file = BytesIO()
+    im_resize.save(byte_file, format='PNG')
+    byte_file.seek(0)
+    s3.upload_fileobj(byte_file, bucket_name, file_name)
     s3_link = f"https://{bucket_name}.s3.amazonaws.com/{file_name}"
     return s3_link
 
@@ -196,6 +329,8 @@ class  AccountRegistration(TemplateView):
                 file = request.FILES['icon']
                 s3_link = upload_file_to_s3(file)
                 add_account.icon = s3_link
+            else:
+                add_account.icon = 'https://music-sns.s3.ap-northeast-1.amazonaws.com/default.png'
             add_account.save()
             self.params["AccountCreate"] = True
         else:

@@ -4,28 +4,50 @@
 {% block main %}
     <div class="main">
         <div id="new-post-text">
-            <h1 class="new-post-title">New Post</h1>
+            <h1 class="new-post-title">Post</h1>
             <form method="post">
                 {% csrf_token %}
                 <div class="new-post-content-parents">
-                    <textarea name="content" class="new-post-content" placeholder="投稿内容を入力..." id="detail" oninput="post_check();" maxlength="500"></textarea>
-                    <input type="hidden" name="song" value="" id="song-id">
+                    <textarea name="content" class="new-post-content" placeholder="投稿内容を入力..." id="detail" oninput="post_check();" maxlength="500">{{ post.contents }}</textarea>
+                    <input type="hidden" name="song" value="{{ song.song.id }}" id="song-id">
+                    {% if post.id != None %}
+                        <input type="hidden" name="post_id" value="{{ post.id }}" id="artist-id">
+                    {% endif %}
+                    {% if reply_to != None %}
+                        <input type="hidden" name="reply_to" value="{{ reply_to }}" id="reply-to">
+                    {% endif %}
                     <div class="new-post-song">
                         <table id="selected-table">
                             <tr>
-                                <td><span id="img"><i class="fa-solid fa-compact-disc"></i></span></td>
+                                <td><span id="img">
+                                    {% if response %}
+                                        <img src="{{ song.album.image }}" id="img" class="new-post-song-img" alt="{{ song.song.name }}">
+                                    {% else %}
+                                        <i class="fa-solid fa-compact-disc"></i>
+                                    {% endif %}
+                                    </span></td>
                                 <td>
                                     <div class="new-post-song-title-artist">
-                                        <p id="no-select">楽曲未選択</p>
-                                        <p id="title" class="new-post-song-title dont-new-line"></p>
-                                        <p id="artist" class="new-post-song-artist dont-new-line"></p>
+                                        <p id="title" class="new-post-song-title dont-new-line">{{ song.song.name }}</p>
+                                        {% if response %}
+                                            <p id="no-select"></p>
+                                            <p id="artist" class="new-post-song-artist dont-new-line">{% for artist in song.artist %}{% if forloop.last %}{{ artist.name }}{% else %}{{ artist.name }}, {% endif %}{% endfor %} / {{ song.album.name }}</p>
+                                        {% else %}
+                                            <p id="no-select">楽曲未選択</p>
+                                            <p id="artist" class="new-post-song-artist dont-new-line"></p>
+                                        {% endif %}
                                     </div>
                                 </td>
-                                <td><button class="new-post-song-select" type="button" onclick="switchDisplay('song');">選択</button></td>
+                                {% if not response %}
+                                    <td><button class="new-post-song-select" type="button" onclick="switchDisplay('song');">選択</button></td>
+                                {% endif %}
                             </tr>
                         </table>
                     </div>
-                    <input type="submit" value="投稿" id="submit" class="new-post-submit" disabled>
+                    <input type="submit" value="投稿" id="submit" class="new-post-submit"
+                    {% if not response %}
+                    disabled
+                    {% endif %}>
                 </div>
             </form>
         </div>

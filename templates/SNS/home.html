@@ -6,11 +6,11 @@
         <div class="item">
             <img src="{{ item.image }}" alt="{{ item.song_name }}">
             <div class="item-gradation"></div>
-            <a class="item-name item-title" href="{% url "SNS:song" item.music_id %}">{{ item.song_name }}</a>
-            <a class="item-name item-artist-album" href="{% url "SNS:song" item.music_id %}">{{ item.artist_name }} / {{ item.album_name }}</a>
+            <a class="item-name item-title" href="{% url 'SNS:song' item.music_id %}">{{ item.song_name }}</a>
+            <a class="item-name item-artist-album" href="{% url 'SNS:song' item.music_id %}">{{ item.artist_name }} / {{ item.album_name }}</a>
         </div>
     {% empty %}
-        <div styles="width: 100%; text-align: center;">
+        <div class="home-no-post">
             <h1>投稿された楽曲がありません</h1>
         </div>
     {% endfor %}
