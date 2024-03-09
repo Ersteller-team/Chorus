@@ -7,18 +7,18 @@ from .constants import *
 
 # ------------ Get No Authentication Access Token ---------------
 
-def get_access_token_no_authentication() -> dict[str, str]:
+def get_access_token_no_authentication():
     
-    data: dict[str, str] = {
+    data = {
         'grant_type': 'client_credentials',
         'client_id': SPOTIFY_CLIENT_ID,
         'client_secret': SPOTIFY_CLIENT_SECRET,
     }
     
-    token_response: dict = requests.post(SPOTIFY_TOKEN_URL, data=data).json()
-    access_token: str = token_response['access_token']
+    token_response = requests.post(SPOTIFY_TOKEN_URL, data=data).json()
+    access_token = token_response['access_token']
     
-    response: dict = {
+    response = {
         'Authorization': f'Bearer {access_token}',
         'Accept-Language': 'ja',
     }
@@ -28,10 +28,10 @@ def get_access_token_no_authentication() -> dict[str, str]:
 
 # ------------ Pick Data from JSON ---------------
 
-def pick_song_data_from_json(data: dict, type: str) -> dict[str, any]:
+def pick_song_data_from_json(data, type):
     
-    response_data: dict[str, any] = {}
-    response_song_data: list = []
+    response_data = {}
+    response_song_data = []
     
     if type == SPOTIFY_SEARCH_FOR_ITEM:
         pick_data = data['tracks']['items']
@@ -40,30 +40,30 @@ def pick_song_data_from_json(data: dict, type: str) -> dict[str, any]:
     
     for item in pick_data:
         
-        song_data: dict = {
+        song_data = {
             'id': item['id'],
             'name': item['name'],
             'preview': item['preview_url'],
         }
         
-        artist_list: list = []
+        artist_list = []
         
         for artist in item['artists']:
             
-            artist_data: dict = {
+            artist_data = {
                 'id': artist['id'],
                 'name': artist['name'],
             }
             
             artist_list.append(artist_data)
         
-        album_data: dict = {
+        album_data = {
             'id': item['album']['id'],
             'name': item['album']['name'],
             'image': item['album']['images'][1]['url'],
         }
         
-        track: dict = {
+        track = {
             'song': song_data,
             'artist': artist_list,
             'album': album_data,
@@ -84,29 +84,29 @@ def pick_song_data_from_json(data: dict, type: str) -> dict[str, any]:
 
 # ------------ Search for Query ---------------
 
-def search_query(type: list[str], query: str, limit: int = 20, offset: int = 0) -> dict[str, any]:
+def search_query(type, query, limit = 20, offset = 0):
 
-    headers: dict = get_access_token_no_authentication()
+    headers = get_access_token_no_authentication()
     
-    search_params: dict = {
+    search_params = {
         'q': query,
         'type': type,
         'limit': limit,
         'offset': offset,
     }
     
-    response: dict[str, any] = requests.get(SPOTIFY_SEARCH_TEXT_URL, params=search_params, headers=headers).json()
+    response = requests.get(SPOTIFY_SEARCH_TEXT_URL, params=search_params, headers=headers).json()
     
-    pick_data: dict[str, any] = pick_song_data_from_json(response, SPOTIFY_SEARCH_FOR_ITEM)
+    pick_data = pick_song_data_from_json(response, SPOTIFY_SEARCH_FOR_ITEM)
     
     return pick_data
 
 
 # ------------ Search for Track & Artist ---------------
 
-def search_track_artist(type: list[str], track: str | None = None, artist: str | None = None, limit: int = 20, offset: int = 0) -> dict[str, dict[str, str | int] | list[dict[str, str | int]]]:
+def search_track_artist(type, track = None, artist = None, limit = 20, offset = 0):
     
-    query: str = ""
+    query = ""
     
     if artist != None:
         query = 'artist:' + artist + ' '
@@ -119,12 +119,12 @@ def search_track_artist(type: list[str], track: str | None = None, artist: str |
 
 # ------------ Search for Track by ID ---------------
 
-def search_track_id(track_id: str) -> dict[str, any]:
+def search_track_id(track_id):
 
-    headers: dict = get_access_token_no_authentication()
+    headers = get_access_token_no_authentication()
     
-    response: dict = requests.get(SPOTIFY_SEARCH_TRACK_ID_URL + track_id, headers=headers).json()
+    response = requests.get(SPOTIFY_SEARCH_TRACK_ID_URL + track_id, headers=headers).json()
     
-    pick_data: dict = pick_song_data_from_json(response, SPOTIFY_GET_TRACK)
+    pick_data = pick_song_data_from_json(response, SPOTIFY_GET_TRACK)
     
     return pick_data

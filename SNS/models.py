@@ -26,6 +26,7 @@ class PostData(models.Model):
     artist_name = models.CharField(max_length=100)
     album_name = models.CharField(max_length=100)
     image = models.URLField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
 class GoodData(models.Model):
     post_id = models.IntegerField()

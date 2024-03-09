@@ -4,9 +4,13 @@ from . import views
 app_name = 'SNS'
 
 urlpatterns = [
+    path('api/', views.api_test, name='api_test'),
     path('home/', views.home, name='home'), 
     path('song/<slug:track_id>', views.song, name='song'),
     path('post/', views.post, name='post'),
+    path('post/good', views.postGood, name='postgood'),
+    path('post/delete', views.postDelete, name='postdelete'),
+    path('profile/<slug:username>', views.profile, name='profile'),
     path('check/username/', views.username_check, name='username_check'),
     path('search/song/', views.search_song, name='search_song'),
     path('signup/', views.AccountRegistration.as_view(), name='signup'), 

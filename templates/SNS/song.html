@@ -1,63 +1,92 @@
 {% extends "SNS/layout.html" %}
 {% load static %}
-{% block title %}{{ response.data.0.song.name }} / {% for artist in response.data.0.artist %}{{ artist.name }}{% endfor %}{{ block.super }}{% endblock %}
+{% load humanize %}
+{% block title %}{{ response.data.0.song.name }} / {% for artist in response.data.0.artist %}{% if forloop.last %}{{ artist.name }}{% else %}{{ artist.name }}, {% endif %}{% endfor %}{{ block.super }}{% endblock %}
 {% block main %}
     <div class="main">
         <div class="song">
             <span class="song-details">
                 <img src="{{ response.data.0.album.image }}" alt="{{ response.data.0.song.name }}" class="song-coverart">
                 <h1 class="song-detail song-title">{{ response.data.0.song.name }}</h1>
-                <p class="song-detail song-artist-album song-artist-album-follower">{% for artist in response.data.0.artist %}{{ artist.name }}{% endfor %} / {{ response.data.0.album.name }}</p>
+                <p class="song-detail song-artist-album song-artist-album-follower">
+                    {% for artist in response.data.0.artist %}
+                        {% if forloop.last %}
+                            {{ artist.name }}
+                        {% else %}
+                            {{ artist.name }}, 
+                        {% endif %}
+                    {% endfor %}
+                     / {{ response.data.0.album.name }}</p>
                 <form action="" method="post">
-                    <input type="hidden" name="song_id" value="{{ response.data.0.song.id }}">
-                    <input class="song-detail song-follow" type="submit" value="楽曲をフォロー">
+                    {% csrf_token %}
+                    {% if follow %}
+                        <input type="hidden" name="status" value="true">
+                        <input type="hidden" name="song_id" value="{{ response.data.0.song.id }}">
+                        <input class="song-detail song-follow" type="submit" value="フォロー解除">
+                    {% else %}
+                        <input type="hidden" name="status" value="false">
+                        <input type="hidden" name="song_id" value="{{ response.data.0.song.id }}">
+                        <input class="song-detail song-follow" type="submit" value="楽曲をフォロー">
+                    {% endif %}
                 </form>
-                <!-- <form action="" method="post">
-                    <input type="hidden" name="song_id" value="{{ response.data.0.song.id }}">
-                    <input class="song-detail song-follow" type="submit" value="フォロー解除">
-                </form> -->
-                <p class="song-detail song-follower song-artist-album-follower">123,456人がフォロー</p>
+                <p class="song-detail song-follower song-artist-album-follower">{{ followers | intcomma }}人がフォロー</p>
             </span>
             <iframe class="song-preview" src="https://open.spotify.com/embed/track/{{ response.data.0.song.id }}?utm_source=generator" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
         </div>
         <div class="post">
             <div class="post-top">
-                <h2 class="post-title">投稿(1)</h2>
-                <span class="post-add" href="{% url 'SNS:home' %}"><i class="fa-solid fa-plus"></i></span>
-                <a href="{% url 'SNS:home' %}" class="post-sort">新しい順</a>
+                <h2 class="post-title">投稿({{ posts | length | intcomma }})</h2>
+                <a href="{% url 'SNS:post' %}?song_id={{ response.data.0.song.id }}"><span class="post-add"><i class="fa-solid fa-plus"></i></span></a>
+                <a href="{% url 'SNS:song' response.data.0.song.id %}" class="post-sort">新しい順</a>
             </div>
-            <div class="post-detail">
-                <div class="post-user">
-                    <img src="{% static 'SNS/prof-icon.jpg' %}" class="profile-icon post-profile-icon">
-                    <a href="{% url 'SNS:home' %}" class="post-username">Soma</a>
-                    <p class="post-date">2024年3月4日 18時07分</p>
+            {% for post in posts %}
+                <div class="post-detail">
+                    <div class="post-user">
+                        <img src="{{ post.user_icon }}" class="profile-icon post-profile-icon">
+                        <a href="{% url 'SNS:profile' post.username %}" class="post-username">{{ post.username }}</a>
+                        <p class="post-date">{{ post.date | naturaltime }}</p>
+                    </div>
+                    <p class="post-text">{{ post.text }}</p>
+                    <div class="post-reaction">
+                        {% if post.good_status %}
+                            <button class="post-reaction-button liked" type="button" id="good-{{ post.id }}" onclick="good('gooded', '{{ post.id }}', '{{ request.user.id }}', '{{ post.user_id }}');"> {{ post.good | intcomma }}</button>
+                        {% else %}
+                            <button class="post-reaction-button like" type="button" id="good-{{ post.id }}" onclick="good('good', '{{ post.id }}', '{{ request.user.id }}', '{{ post.user_id }}');"> {{ post.good | intcomma }}</button>
+                        {% endif %}
+                        <button class="post-reaction-button comment" type="button" onclick="location.href='{% url 'SNS:post' %}?reply_to={{ post.id }}&song_id={{ response.data.0.song.id }}';"> {{ post.replies | length }}</button>
+                        {% if post.username == request.user.username %}
+                            <button class="post-reaction-button edit" type="button" onclick="location.href='{% url 'SNS:post' %}?post_id={{ post.id }}&song_id={{ response.data.0.song.id }}';"></button>
+                            <button class="post-reaction-button delete" type="button" onclick="deletePost('{{ post.id }}', '{{ request.user.id }}');"></button>
+                        {% endif %}
+                    </div>
                 </div>
-                <p class="post-text">この曲は最高です！</p>
-                <div class="post-reaction">
-                    <span class="post-reaction-like"><i class="fa-regular fa-thumbs-up"></i> <span class="post-reaction-value">123</span></span>
-                    <!-- <span class="post-reaction-like"><i class="fa-solid fa-thumbs-up"></i> <span class="post-reaction-value">123</span></span> -->
-                    <span class="post-reaction-comment"><i class="fa-regular fa-comment"></i> <span class="post-reaction-value">123</span></span>
-                    <span class="post-reaction-report"><i class="fa-solid fa-bullhorn"></i></span>
-                    <span class="post-reaction-edit"><i class="fa-regular fa-edit"></i></span>
-                    <span class="post-reaction-delete"><i class="fa-regular fa-trash-can"></i></span>
+                {% for reply in post.replies %}
+                    <div class="post-detail-reply">
+                        <div class="post-user">
+                            <img src="{{ reply.user_icon }}" class="profile-icon post-profile-icon">
+                            <a href="{% url 'SNS:profile' reply.username %}" class="post-username">{{ reply.username }}</a>
+                            <p class="post-date">{{ reply.date | naturaltime }}</p>
+                        </div>
+                        <p class="post-text">{{ reply.text }}</p>
+                        <div class="post-reaction">
+                            {% if reply.good_status %}
+                                <button class="post-reaction-button liked" type="button" id="good-{{ reply.id }}" onclick="good('gooded', '{{ reply.id }}', '{{ request.user.id }}', '{{ reply.user_id }}');"> {{ reply.good | intcomma }}</button>
+                            {% else %}
+                                <button class="post-reaction-button like" type="button" id="good-{{ reply.id }}" onclick="good('good', '{{ reply.id }}', '{{ request.user.id }}', '{{ reply.user_id }}');"> {{ reply.good | intcomma }}</button>
+                            {% endif %}
+                            {% if post.username == request.user.username %}
+                                <button class="post-reaction-button edit" type="button" onclick="location.href='{% url 'SNS:post' %}?post_id={{ reply.id }}&song_id={{ response.data.0.song.id }}';"></button>
+                                <button class="post-reaction-button delete" type="button" href="{% url 'SNS:postdelete' %}?post_id={{ reply.id }}"></button>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% empty %}
+                <div class="home-no-post">
+                    <h1>投稿がありません</h1>
                 </div>
-            </div>
-            <div class="post-detail-reply">
-                <div class="post-user">
-                    <img src="{% static 'SNS/prof-icon.jpg' %}" class="profile-icon post-profile-icon">
-                    <a href="{% url 'SNS:home' %}" class="post-username">Soma</a>
-                    <p class="post-date">2024年3月4日 18時07分</p>
-                </div>
-                <p class="post-text">この曲は最高です！</p>
-                <div class="post-reaction">
-                    <span class="post-reaction-like"><i class="fa-regular fa-thumbs-up"></i> <span class="post-reaction-value">123</span></span>
-                    <!-- <span class="post-reaction-like"><i class="fa-solid fa-thumbs-up"></i> <span class="post-reaction-value">123</span></span> -->
-                    <span class="post-reaction-comment"><i class="fa-regular fa-comment"></i> <span class="post-reaction-value">123</span></span>
-                    <span class="post-reaction-report"><i class="fa-solid fa-bullhorn"></i></span>
-                    <span class="post-reaction-edit"><i class="fa-regular fa-edit"></i></span>
-                    <span class="post-reaction-delete"><i class="fa-regular fa-trash-can"></i></span>
-                </div>
-            </div>
+            {% endfor %}
         </div>
     </div>
+    <script src="{% static 'SNS/song.js' %}"></script>
 {% endblock %}
