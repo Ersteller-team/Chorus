@@ -1,0 +1,7 @@
+{% extends "SNS/layout.html" %}
+{% load static %}
+{% load humanize %}
+{% block title %}Spotify Authenticate{{ block.super }}{% endblock %}
+{% block main %}
+    <button onclick="location.href='{{ auth_url }}';">Spotifyで続ける</button>
+{% endblock %}

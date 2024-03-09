@@ -33,7 +33,7 @@ def home(request):
             return JsonResponse({ 'response': items })
         
         latest_music_ids = PostData.objects.values('music_id').annotate(latest_created_at=models.Max('created_at'))
-        items = PostData.objects.filter(created_at__in=latest_music_ids.values('latest_created_at'))[:100]
+        items = PostData.objects.filter(created_at__in=latest_music_ids.values('latest_created_at')).order_by('created_at').reverse()[:100]
         
         return render(request, 'SNS/home.html', { 
             'items': items, 
@@ -112,6 +112,39 @@ def song(request, track_id):
             )
         
         return redirect(HOST_URL + '/song/' + track_id)
+
+
+def search(request):
+    return render(request, 'SNS/search.html')
+
+
+@login_required
+def spotify(request):
+    
+    auth_url = spotify_data.get_authenticate_url()
+    
+    return render(request, 'SNS/authenticate.html', {
+        'auth_url': auth_url,
+    })
+
+
+@login_required
+def spotify_callback(request):
+    
+    if request.method == 'GET':
+        
+        if 'code' in request.GET:
+            
+            authenticate_code = request.GET['code']
+            
+            access_token, refresh_token = spotify_data.get_access_token_authentication(authenticate_code)
+            
+            user = ProfileData.objects.get(user_id=request.user.id)
+            user.spotify_access_token = access_token
+            user.spotify_refresh_token = refresh_token
+            user.save()
+    
+    return render(request, 'SNS/callback.html')
 
 
 def profile(request, username):
@@ -331,6 +364,8 @@ class  AccountRegistration(TemplateView):
                 add_account.icon = s3_link
             else:
                 add_account.icon = 'https://music-sns.s3.ap-northeast-1.amazonaws.com/default.png'
+            add_account.spotify_access_token = None
+            add_account.spotify_refresh_token = None
             add_account.save()
             self.params["AccountCreate"] = True
         else:

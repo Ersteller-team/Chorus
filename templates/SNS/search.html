@@ -1,0 +1,21 @@
+{% extends "SNS/layout.html" %}
+{% load static %}
+{% block title %}New Post{{block.super}}{% endblock %}
+{% block main %}
+    <div id="search-song-list">
+        <div class="search-box">
+            <div class="search-bar-search">
+                <input type="text" id="search-text" class="song-search" placeholder="検索..." onchange="searchSong(0);">
+                <div id="search-result">
+                    曲を検索してください
+                </div>
+            </div>
+            <table id="search-result-table">
+            </table>
+            <div class="center">
+                <button id="more-button" class="new-post-song-select" type="button" onclick="searchSong(1);">More</button>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'SNS/pick-song-search.js' %}"></script>
+{% endblock %}
