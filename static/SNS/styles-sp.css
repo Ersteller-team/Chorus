@@ -12,6 +12,12 @@ a {
     color: black;
 }
 
+#connect-to-spotify {
+    width: 200px;
+    text-align: center;
+    margin-top: 50px;
+}
+
 @media screen and (max-width: 834px) {
 
     .dont-new-line {

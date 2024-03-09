@@ -3,5 +3,7 @@
 {% load humanize %}
 {% block title %}Spotify Authenticate{{ block.super }}{% endblock %}
 {% block main %}
-    <button onclick="location.href='{{ auth_url }}';">Spotifyで続ける</button>
+    <h1>Spotify に接続</h1>
+    <p>Spotifyに接続して、Music SNSをさらに楽しもう！</p>
+    <button class="new-post-song-select" id="connect-to-spotify" type="button" onclick="location.href='{{ auth_url }}';"><i class="fa-brands fa-spotify"></i> Spotifyに接続</button>
 {% endblock %}

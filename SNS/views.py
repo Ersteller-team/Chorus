@@ -46,7 +46,7 @@ def song(request, track_id):
         
         response = spotify_data.search_track_id(track_id)
         
-        if response['status']['once'] == True:
+        if response['status']['one'] == True:
             
             follow = MusicFollowData.objects.filter(user_id=request.user.id, music_id=track_id).exists()
             
@@ -121,11 +121,28 @@ def search(request):
 @login_required
 def spotify(request):
     
-    auth_url = spotify_data.get_authenticate_url()
+    user = ProfileData.objects.get(user_id=request.user.id)
     
-    return render(request, 'SNS/authenticate.html', {
-        'auth_url': auth_url,
-    })
+    if user.spotify_refresh_token == None:
+    
+        auth_url = spotify_data.get_authenticate_url()
+        
+        return render(request, 'SNS/authenticate.html', {
+            'auth_url': auth_url,
+        })
+    
+    else:
+        
+        # access_token, refresh_token = spotify_data.refresh_access_token(user.spotify_refresh_token)
+        
+        # user.spotify_access_token = access_token
+        # user.spotify_refresh_token = refresh_token
+        # user.save()
+        
+        response = spotify_data.get_saved_track(user.spotify_access_token, 50, 0)
+        
+        return JsonResponse({ 'response': response })
+        return render(request, 'SNS/spotify.html')
 
 
 @login_required
@@ -144,7 +161,7 @@ def spotify_callback(request):
             user.spotify_refresh_token = refresh_token
             user.save()
     
-    return render(request, 'SNS/callback.html')
+    return redirect(HOST_URL + '/spotify')
 
 
 def profile(request, username):
@@ -215,6 +232,8 @@ def post(request):
         
         return redirect(HOST_URL + '/song/' + song_id)
 
+
+@login_required
 def postGood(request):
     
     if request.method == 'GET':
@@ -249,6 +268,7 @@ def postGood(request):
     
     else:
         return JsonResponse({ 'status': 'failed' })
+
 
 @login_required
 def postDelete(request):

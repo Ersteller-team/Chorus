@@ -3,30 +3,33 @@ import requests
 import base64
 from .spotify_secret import *
 from .constants import *
+from .spotify_pick_data import *
 
 
 # ------------ Get Authenticate URL ---------------
 
 def get_authenticate_url():
     
-    auth_url = SPOTIFY_AUTHENTICATION_URL + '?client_id=' + SPOTIFY_CLIENT_ID + '&response_type=code&redirect_uri=' + SPOTIFY_REDIRECT_URI + '&show_dialog=false&scope=' + SPOTIFY_AUTHENTICATE_SCOPE
+    auth_url = SPOTIFY_AUTHENTICATION_URL + '?client_id=' + SPOTIFY_CLIENT_ID + '&response_type=code&redirect_uri=' + SPOTIFY_REDIRECT_URI + '&show_dialog=true&scope=' + SPOTIFY_AUTHENTICATE_SCOPE
     
     return auth_url
 
 
 # ------------ Create header ---------------
 
-def create_header():
+def create_header(access_token = None):
     
-    data = {
-        'grant_type': 'client_credentials',
-        'client_id': SPOTIFY_CLIENT_ID,
-        'client_secret': SPOTIFY_CLIENT_SECRET,
-    }
-    
-    token_response = requests.post(SPOTIFY_TOKEN_URL, data=data).json()
-    
-    access_token = token_response['access_token']
+    if access_token == None:
+        
+        data = {
+            'grant_type': 'client_credentials',
+            'client_id': SPOTIFY_CLIENT_ID,
+            'client_secret': SPOTIFY_CLIENT_SECRET,
+        }
+        
+        token_response = requests.post(SPOTIFY_TOKEN_URL, data=data).json()
+        
+        access_token = token_response['access_token']
     
     response = {
         'Authorization': f'Bearer {access_token}',
@@ -86,60 +89,23 @@ def get_access_token_authentication(code):
     return access_token, refresh_token
 
 
-# ------------ Pick Data from JSON ---------------
+# ------------ Get Saved Track Data ---------------
 
-def pick_song_data_from_json(data, type):
+def get_saved_track(access_token, limit = 20, offset = 0):
+
+    headers = create_header(access_token)
     
-    response_data = {}
-    response_song_data = []
+    params = {
+        'limit': limit,
+        'offset': offset,
+    }
     
-    if type == SPOTIFY_SEARCH_FOR_ITEM:
-        pick_data = data['tracks']['items']
-    elif type == SPOTIFY_GET_TRACK:
-        pick_data = [data]
+    response = requests.get(SPOTIFY_SAVED_TRACKS_URL, params=params, headers=headers).json()
+    # return response
     
-    for item in pick_data:
-        
-        song_data = {
-            'id': item['id'],
-            'name': item['name'],
-            'preview': item['preview_url'],
-        }
-        
-        artist_list = []
-        
-        for artist in item['artists']:
-            
-            artist_data = {
-                'id': artist['id'],
-                'name': artist['name'],
-            }
-            
-            artist_list.append(artist_data)
-        
-        album_data = {
-            'id': item['album']['id'],
-            'name': item['album']['name'],
-            'image': item['album']['images'][1]['url'],
-        }
-        
-        track = {
-            'song': song_data,
-            'artist': artist_list,
-            'album': album_data,
-        }
-        
-        response_song_data.append(track)
+    pick_data = pick_song_data_from_json(response, SPOTIFY_SAVED_TRACKS)
     
-    data_length = len(response_song_data)
-    
-    if response_song_data == 0:
-        response_data = { 'status': { 'success': False, 'total': 0, 'once': False }, 'data': response_song_data }
-    
-    else:
-        response_data = { 'status': { 'success': True, 'total': data_length, 'once': data_length == 1 }, 'data': response_song_data }
-    
-    return response_data
+    return pick_data
 
 
 # ------------ Search for Query ---------------
