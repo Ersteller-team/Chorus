@@ -4,6 +4,7 @@ import base64
 from .spotify_secret import *
 from .constants import *
 from .spotify_pick_data import *
+from .models import *
 
 
 # ------------ Get Authenticate URL ---------------
@@ -13,30 +14,6 @@ def get_authenticate_url():
     auth_url = SPOTIFY_AUTHENTICATION_URL + '?client_id=' + SPOTIFY_CLIENT_ID + '&response_type=code&redirect_uri=' + SPOTIFY_REDIRECT_URI + '&show_dialog=true&scope=' + SPOTIFY_AUTHENTICATE_SCOPE
     
     return auth_url
-
-
-# ------------ Create header ---------------
-
-def create_header(access_token = None):
-    
-    if access_token == None:
-        
-        data = {
-            'grant_type': 'client_credentials',
-            'client_id': SPOTIFY_CLIENT_ID,
-            'client_secret': SPOTIFY_CLIENT_SECRET,
-        }
-        
-        token_response = requests.post(SPOTIFY_TOKEN_URL, data=data).json()
-        
-        access_token = token_response['access_token']
-    
-    response = {
-        'Authorization': f'Bearer {access_token}',
-        'Accept-Language': 'ja',
-    }
-    
-    return response
 
 
 # ------------ Refresh Access Token ---------------
@@ -56,11 +33,57 @@ def refresh_access_token(refresh_token):
     }
     
     token_response = requests.post(SPOTIFY_TOKEN_URL, data=data, headers=headers).json()
+    print(token_response)
     
     access_token = token_response['access_token']
-    refresh_token = token_response['refresh_token']
     
-    return access_token, refresh_token
+    return access_token
+
+
+# ------------ Create header ---------------
+
+def create_header(access_token = None, request = None):
+    
+    if access_token == None:
+        
+        data = {
+            'grant_type': 'client_credentials',
+            'client_id': SPOTIFY_CLIENT_ID,
+            'client_secret': SPOTIFY_CLIENT_SECRET,
+        }
+        
+        token_response = requests.post(SPOTIFY_TOKEN_URL, data=data).json()
+        
+        access_token = token_response['access_token']
+    
+    else:
+        
+        response = {
+            'Authorization': f'Bearer {access_token}',
+            'Accept-Language': 'ja',
+        }
+        
+        params = {
+            'limit': 1,
+        }
+        
+        test_token = requests.get(SPOTIFY_SAVED_TRACKS_URL, params=params, headers=response).json()
+        
+        if 'error' in test_token:
+            
+            user = ProfileData.objects.get(user_id = request.user.id)
+            
+            access_token = refresh_access_token(user.spotify_refresh_token)
+            
+            user.spotify_access_token = access_token
+            user.save()
+    
+    response = {
+        'Authorization': f'Bearer {access_token}',
+        'Accept-Language': 'ja',
+    }
+    
+    return response
 
 
 # ------------ Get Access Token ---------------
@@ -91,9 +114,9 @@ def get_access_token_authentication(code):
 
 # ------------ Get Saved Track Data ---------------
 
-def get_saved_track(access_token, limit = 20, offset = 0):
+def get_saved_track(access_token, request, limit = 20, offset = 0):
 
-    headers = create_header(access_token)
+    headers = create_header(access_token, request)
     
     params = {
         'limit': limit,
@@ -101,7 +124,6 @@ def get_saved_track(access_token, limit = 20, offset = 0):
     }
     
     response = requests.get(SPOTIFY_SAVED_TRACKS_URL, params=params, headers=headers).json()
-    # return response
     
     pick_data = pick_song_data_from_json(response, SPOTIFY_SAVED_TRACKS)
     

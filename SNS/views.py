@@ -139,7 +139,7 @@ def spotify(request):
         # user.spotify_refresh_token = refresh_token
         # user.save()
         
-        response = spotify_data.get_saved_track(user.spotify_access_token, 50, 0)
+        response = spotify_data.get_saved_track(user.spotify_access_token, request, 50, 0)
         
         return JsonResponse({ 'response': response })
         return render(request, 'SNS/spotify.html')
