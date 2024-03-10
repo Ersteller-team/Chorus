@@ -13,7 +13,7 @@ def pick_song_data_from_json(data, type):
         pick_data = data['tracks']['items']
     elif type == SPOTIFY_GET_TRACK:
         pick_data = [data]
-    elif type == SPOTIFY_SAVED_TRACKS:
+    elif type == SPOTIFY_SAVED_TRACKS or type == SPOTIFY_RECENT_PLAY:
         pick_data = data['items']
     
     if type == SPOTIFY_SEARCH_FOR_ITEM or type == SPOTIFY_GET_TRACK:
@@ -51,7 +51,7 @@ def pick_song_data_from_json(data, type):
             
             response_song_data.append(track)
     
-    elif type == SPOTIFY_SAVED_TRACKS:
+    elif type == SPOTIFY_SAVED_TRACKS or type == SPOTIFY_RECENT_PLAY:
         
         for item in pick_data:
             
@@ -88,10 +88,19 @@ def pick_song_data_from_json(data, type):
     
     data_length = len(response_song_data)
     
-    if response_song_data == 0:
-        response_data = { 'status': { 'success': False, 'total': 0, 'one': False }, 'data': response_song_data }
-    
+    if 'offset' in data:
+        offset = data['offset']
     else:
-        response_data = { 'status': { 'success': True, 'total': data_length, 'one': data_length == 1 }, 'data': response_song_data }
+        offset = 0
+    
+    response_data = { 
+        'status': {
+            'success': data_length != 0,
+            'one': data_length == 1,
+            'total': data_length,
+            'offset': offset,
+        },
+        'data': response_song_data,
+    }
     
     return response_data
