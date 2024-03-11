@@ -60,13 +60,13 @@ function searchSong(load_times) {
                         artist += ', ' + request.response['response']['data'][i]['artist'][j]['name'];
                     }
                     var album = request.response['response']['data'][i]['album']['name'];
-                    search_result_table.innerHTML += `<tr><div class="new-post-song">
+                    search_result_table.innerHTML += `<tr>
                         <td class="song-table-img"><img src="` + img + `" id="img" class="new-post-song-img" alt="` + title + `"></td>
                         <td class="song-table-title"><div class="search-song-title-artist new-post-song-title-artist">
-                            <a href="`+ url + `/song/` + id + `"><p class="new-post-song-title dont-new-line">` + title + `</p>
-                            <a href="`+ url + `/song/` + id + `"><p class="new-post-song-artist dont-new-line">` + artist + ` / ` + album + `</p>
+                            <a href="`+ url + `/search/song/` + id + `"><p class="new-post-song-title dont-new-line">` + title + `</p>
+                            <a href="`+ url + `/search/song/` + id + `"><p class="new-post-song-artist dont-new-line">` + artist + ` / ` + album + `</p>
                         </div></td>
-                    </div></tr>`;
+                    </tr>`;
                     more_button.style.display = "block";
                     more_button.innerHTML = 'More';
                     more_button.setAttribute('onclick', 'searchSong(' + String(load_times + 1) + ')');

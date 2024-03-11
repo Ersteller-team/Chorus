@@ -40,6 +40,10 @@ def home(request):
         })
 
 
+def search(request):
+    return render(request, 'SNS/search.html')
+
+
 def song(request, track_id):
     
     if request.method == 'GET':
@@ -114,52 +118,27 @@ def song(request, track_id):
         return redirect(HOST_URL + '/song/' + track_id)
 
 
-def search(request):
-    return render(request, 'SNS/search.html')
-
-
-@login_required
-def spotify(request):
-    
-    user = ProfileData.objects.get(user_id=request.user.id)
-    
-    if user.spotify_refresh_token == None:
-    
-        auth_url = spotify_data.get_authenticate_url()
-        
-        return render(request, 'SNS/authenticate.html', {
-            'auth_url': auth_url,
-        })
-    
-    else:
-        
-        response = spotify_data.get_recent_play(user.spotify_access_token, request, 50)
-        
-        return JsonResponse({ 'response': response })
-        return render(request, 'SNS/spotify.html')
-
-
-@login_required
-def spotify_callback(request):
+def album(request, album_id):
     
     if request.method == 'GET':
         
-        if 'code' in request.GET:
-            
-            authenticate_code = request.GET['code']
-            
-            access_token, refresh_token = spotify_data.get_access_token_authentication(authenticate_code)
-            
-            user = ProfileData.objects.get(user_id=request.user.id)
-            user.spotify_access_token = access_token
-            user.spotify_refresh_token = refresh_token
-            user.save()
+        response = spotify_data.search_album_id(album_id)
+        
+        return render(request, 'SNS/album.html', {
+            'response': response,
+        })
+
+
+def artist(request, artist_id):
     
-    return redirect(HOST_URL + '/spotify')
-
-
-def profile(request, username):
-    return render(request, 'SNS/profile.html')
+    if request.method == 'GET':
+        
+        response = spotify_data.search_artist_id(artist_id)
+        
+        # return JsonResponse({ 'response': response })
+        return render(request, 'SNS/artist.html', {
+            'response': response,
+        })
 
 
 @login_required
@@ -176,18 +155,30 @@ def post(request):
         song = False
         post = None
         reply_to = None
+        recent_play = { 'data': [] }
+        recent = False
         
         if 'song_id' in request.GET:
             
             song_data = spotify_data.search_track_id(request.GET['song_id'])['data'][0]
             song = True
         
+        else:
+            
+            access_token = ProfileData.objects.get(user_id=request.user.id).spotify_access_token
+            
+            if access_token != None:
+                recent_play = spotify_data.get_recent_play(access_token, request, 50)
+                recent = True
+        
         if 'post_id' in request.GET:
+            
             post_check = PostData.objects.get(id=request.GET['post_id'])
             if post_check.user_id == request.user.id:
                 post = post_check
         
         if 'reply_to' in request.GET:
+            
             reply_to = request.GET['reply_to']
         
         return render(request, 'SNS/post.html', {
@@ -195,6 +186,8 @@ def post(request):
             'response': song,
             'post': post,
             'reply_to': reply_to,
+            'recent_song': recent_play['data'],
+            'recent': recent,
         })
     
     elif request.method == 'POST':
@@ -257,7 +250,6 @@ def postGood(request):
             })
         
         else:
-            print("in")
             return JsonResponse({ 'status': 'failed' })
     
     else:
@@ -293,6 +285,53 @@ def postDelete(request):
     return JsonResponse({ 'success': False })
 
 
+@login_required
+def spotify(request):
+    
+    user = ProfileData.objects.get(user_id=request.user.id)
+    
+    if user.spotify_refresh_token == None:
+    
+        auth_url = spotify_data.get_authenticate_url()
+        
+        return render(request, 'SNS/authenticate.html', {
+            'auth_url': auth_url,
+        })
+    
+    else:
+        
+        response = spotify_data.get_recent_play(user.spotify_access_token, request, 50)
+        
+        return JsonResponse({ 'response': response })
+        return render(request, 'SNS/spotify.html')
+
+
+@login_required
+def spotify_callback(request):
+    
+    if request.method == 'GET':
+        
+        if 'code' in request.GET:
+            
+            authenticate_code = request.GET['code']
+            
+            access_token, refresh_token = spotify_data.get_access_token_authentication(authenticate_code)
+            
+            user = ProfileData.objects.get(user_id=request.user.id)
+            user.spotify_access_token = access_token
+            user.spotify_refresh_token = refresh_token
+            user.save()
+    
+    return redirect(HOST_URL + '/spotify')
+
+
+def profile(request, username):
+    return render(request, 'SNS/profile.html')
+
+
+
+# Json Response
+
 def search_song(request):
     
     if request.method == 'GET':
@@ -300,6 +339,17 @@ def search_song(request):
         if "query" in request.GET:
         
             response = spotify_data.search_query([SPOTIFY_SEARCH_TYPE_TRACK], request.GET['query'], 20, request.GET['offset'])
+        
+            return JsonResponse({ 'response': response })
+
+
+def search_any(request):
+    
+    if request.method == 'GET':
+        
+        if "query" in request.GET:
+        
+            response = spotify_data.search_query([SPOTIFY_SEARCH_TYPE_TRACK, SPOTIFY_SEARCH_TYPE_ALBUM, SPOTIFY_SEARCH_TYPE_ARTIST, SPOTIFY_SEARCH_TYPE_PLAYLIST], request.GET['query'], 20, request.GET['offset'])
         
             return JsonResponse({ 'response': response })
 
@@ -318,6 +368,8 @@ def username_check(request):
         else:
             return JsonResponse({ 'exists': True })
 
+
+# Account
 
 def randomname(n):
     randlst = [random.choice(string.ascii_letters + string.digits) for i in range(n)]

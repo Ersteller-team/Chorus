@@ -80,8 +80,53 @@
     margin-top: 50px;
 }
 
+#auth-main {
+    width: 90%;
+    margin: 10% 5%;
+    text-align: center;
+}
+
+.break-point {
+    display: inline-block;
+    text-align: left;
+}
+
+.break-point span {
+    display: block;
+}
+
+.center {
+    width: 95%;
+    text-align: center;
+    margin: auto;
+}
+
+#record-song {
+    margin-top: 50px;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
 
 @media screen and (min-width: 834px) {
+
+    #album-name {
+        margin-top: 90px;
+    }
+
+    #album-artist {
+        margin-top: 90px;
+    }
+
+    #artist-name {
+        margin-top: 135px;
+    }
+
+    .margin-auto {
+        margin: auto;
+    }
 
     .sp {
         display: none;

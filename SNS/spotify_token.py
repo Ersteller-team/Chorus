@@ -32,7 +32,6 @@ def refresh_access_token(refresh_token):
     }
     
     token_response = requests.post(SPOTIFY_TOKEN_URL, data=data, headers=headers).json()
-    print(token_response)
     
     access_token = token_response['access_token']
     
