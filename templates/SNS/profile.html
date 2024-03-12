@@ -1,0 +1,37 @@
+{% extends "SNS/layout.html" %}
+{% load static %}
+{% load humanize %}
+{% block main %}
+    <div class="main">
+        <div class="song">
+            <span class="song-details">
+                <img src="{{ profile.icon }}" alt="{{ user_obj.username }}" class="song-coverart prof-icon">
+                <h1 class="song-detail song-title">{{ user_obj.username }}</h1>
+            </span>
+            {% if request.user.username != user_obj.username %}
+                <form action="{% url "SNS:profile" user_obj.id %}" method="post">
+                    {% csrf_token %}
+                    {% if follow %}
+                        <input type="hidden" name="status" value="true">
+                        <input type="hidden" name="user_id" value="{{ user_obj.id }}">
+                        <input class="song-detail song-follow" type="submit" value="フォロー解除">
+                    {% else %}
+                        <input type="hidden" name="status" value="false">
+                        <input type="hidden" name="user_id" value="{{ user_obj.id }}">
+                        <input class="song-detail song-follow" type="submit" value="ユーザーをフォロー">
+                    {% endif %}
+                </form>
+            {% else %}
+                <button class="song-detail song-follow" type="button" onclick="location.href = '{% url "SNS:profile_edit" request.user.username %}';">プロフィールを編集</button>
+            {% endif %}
+            <p class="song-detail song-follower song-artist-album-follower"><a href="{% url "SNS:song_follow" user_obj.username %}">{{ song_follow }} 曲フォロー</a> ・ <a href="{% url "SNS:user_follow" user_obj.username %}">{{ user_follow | intcomma }} ユーザーフォロー</a> ・ <a href="{% url "SNS:user_follower" user_obj.username %}">{{ follower | intcomma }} フォロワー</a></p>
+        </div>
+        <div class="center">
+            {% if profile.description != 'None' %}
+                <p>{{ profile.description }}</p>
+            {% endif %}
+        </div>
+        {% block profile %}
+        {% endblock %}
+    </div>
+{% endblock %}

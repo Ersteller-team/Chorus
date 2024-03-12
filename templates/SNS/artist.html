@@ -1,0 +1,46 @@
+{% extends "SNS/layout.html" %}
+{% load static %}
+{% load humanize %}
+{% block title %}{{ response.artist.name }}{{ block.super }}{% endblock %}
+{% block main %}
+    <div class="main">
+        <div class="song">
+            <span class="song-details">
+                <img src="{{ response.artist.image }}" alt="{{ response.artist.name }}" class="song-coverart">
+                <h1 class="song-detail song-title" id="artist-name">{{ response.artist.name }}</h1>
+            </span>
+            <iframe class="song-preview" src="https://open.spotify.com/embed/artist/{{ response.artist.id }}?utm_source=generator" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        </div>
+        <div class="center">
+            <h2 id="record-song">再生ランキング</h2>
+            <table class="margin-auto">
+                {% for song in response.songs %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td class="song-table-img"><img src="{{ song.album.image }}" id="img" class="new-post-song-img" alt="{{ song.song.name }}"></td>
+                        <td class="song-table-title">
+                            <div class="search-song-title-artist new-post-song-title-artist">
+                                <a href="{% url "SNS:song" song.song.id %}"><p class="new-post-song-title dont-new-line">{{ song.song.name }}</p>
+                                <a href="{% url "SNS:song" song.song.id %}"><p class="new-post-song-artist dont-new-line">{% for artist in song.artist %}{% if forloop.last %}{{ artist.name }}{% else %}{{ artist.name }}, {% endif %}{% endfor %} / {{ song.album.name }}</p>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+            <h2 id="record-song">リリース ({{ response.albums | length }})</h2>
+            <table class="margin-auto">
+                {% for album in response.albums %}
+                    <tr>
+                        <td class="song-table-img"><img src="{{ album.album.image }}" id="img" class="new-post-song-img" alt="{{ album.album.name }}"></td>
+                        <td class="song-table-title">
+                            <div class="search-song-title-artist new-post-song-title-artist">
+                                <a href="{% url "SNS:album" album.album.id %}"><p class="new-post-song-title dont-new-line">{{ album.album.name }}</p>
+                                <a href="{% url "SNS:album" album.album.id %}"><p class="new-post-song-artist dont-new-line">{% for artist in album.artist %}{% if forloop.last %}{{ artist.name }}{% else %}{{ artist.name }}, {% endif %}{% endfor %}</p>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+{% endblock %}

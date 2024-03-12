@@ -5,13 +5,18 @@ class ProfileData(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     icon = models.URLField()
     description = models.TextField(max_length=300)
-    spotify_id = models.CharField(max_length=100)
+    spotify_access_token = models.CharField(max_length=100, null=True)
+    spotify_refresh_token = models.CharField(max_length=100, null=True)
     def __str__(self):
         return self.user.username
 
 class MusicFollowData(models.Model):
     user_id = models.IntegerField()
     music_id = models.CharField(max_length=100)
+    song_name = models.CharField(max_length=100)
+    artist_name = models.CharField(max_length=100)
+    album_name = models.CharField(max_length=100)
+    image = models.URLField()
 
 class UserFollowData(models.Model):
     user_id = models.IntegerField()

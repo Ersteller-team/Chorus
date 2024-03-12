@@ -1,92 +1,83 @@
 # ------------ Import Libraries ------------
 import requests
-from .spotify_secret import *
-from .spotify_url import *
-from .constants import *
+from .spotify_token import *
 
 
-# ------------ Get No Authentication Access Token ---------------
+# Need User Data
 
-def get_access_token_no_authentication():
-    
-    data = {
-        'grant_type': 'client_credentials',
-        'client_id': SPOTIFY_CLIENT_ID,
-        'client_secret': SPOTIFY_CLIENT_SECRET,
-    }
-    
-    token_response = requests.post(SPOTIFY_TOKEN_URL, data=data).json()
-    access_token = token_response['access_token']
-    
-    response = {
-        'Authorization': f'Bearer {access_token}',
-        'Accept-Language': 'ja',
-    }
-    
-    return response
+# ------------ Get Now Play Data ---------------
 
-
-# ------------ Pick Data from JSON ---------------
-
-def pick_song_data_from_json(data, type):
+def get_current_play(access_token, request):
     
-    response_data = {}
-    response_song_data = []
+    headers = create_header(access_token, request)
     
-    if type == SPOTIFY_SEARCH_FOR_ITEM:
-        pick_data = data['tracks']['items']
-    elif type == SPOTIFY_GET_TRACK:
-        pick_data = [data]
+    response = requests.get(SPOTIFY_USER_PROFILE_URL, headers=headers)
     
-    for item in pick_data:
+    if response['product'] == 'premium':
         
-        song_data = {
-            'id': item['id'],
-            'name': item['name'],
-            'preview': item['preview_url'],
+        params = {
+            'additional_types': 'track',
         }
         
-        artist_list = []
+        response = requests.get(SPOTIFY_CURRENT_PLAY_URL, params=params, headers=headers)
         
-        for artist in item['artists']:
+        if response.status_code == 204:
             
-            artist_data = {
-                'id': artist['id'],
-                'name': artist['name'],
-            }
+            pick_data = { 'premium_user': True, 'playing': False }
+        
+        else:
             
-            artist_list.append(artist_data)
-        
-        album_data = {
-            'id': item['album']['id'],
-            'name': item['album']['name'],
-            'image': item['album']['images'][1]['url'],
-        }
-        
-        track = {
-            'song': song_data,
-            'artist': artist_list,
-            'album': album_data,
-        }
-        
-        response_song_data.append(track)
-    
-    data_length = len(response_song_data)
-    
-    if response_song_data == 0:
-        response_data = { 'status': { 'success': False, 'total': 0, 'once': False }, 'data': response_song_data }
+            pick_data = pick_current_play_data_from_json(response.json())
     
     else:
-        response_data = { 'status': { 'success': True, 'total': data_length, 'once': data_length == 1 }, 'data': response_song_data }
+        
+        pick_data = { 'premium_user': False }
     
-    return response_data
+    return pick_data
 
+
+# ------------ Get Recent Play Data ---------------
+
+def get_recent_play(access_token, request, limit = 20):
+    
+    headers = create_header(access_token, request)
+    
+    params = {
+        'limit': limit,
+    }
+    
+    response = requests.get(SPOTIFY_RECENT_PLAY_URL, params=params, headers=headers).json()
+    
+    pick_data = pick_song_data_from_json(response, SPOTIFY_RECENT_PLAY)
+    
+    return pick_data
+
+
+# ------------ Get Saved Track Data ---------------
+
+def get_saved_track(access_token, request, limit = 20, offset = 0):
+
+    headers = create_header(access_token, request)
+    
+    params = {
+        'limit': limit,
+        'offset': offset,
+    }
+    
+    response = requests.get(SPOTIFY_SAVED_TRACKS_URL, params=params, headers=headers).json()
+    
+    pick_data = pick_song_data_from_json(response, SPOTIFY_SAVED_TRACKS)
+    
+    return pick_data
+
+
+# No Need User Data
 
 # ------------ Search for Query ---------------
 
 def search_query(type, query, limit = 20, offset = 0):
 
-    headers = get_access_token_no_authentication()
+    headers = create_header()
     
     search_params = {
         'q': query,
@@ -97,7 +88,13 @@ def search_query(type, query, limit = 20, offset = 0):
     
     response = requests.get(SPOTIFY_SEARCH_TEXT_URL, params=search_params, headers=headers).json()
     
-    pick_data = pick_song_data_from_json(response, SPOTIFY_SEARCH_FOR_ITEM)
+    if type == SPOTIFY_SEARCH_TYPE_TRACK:
+        
+        pick_data = pick_song_data_from_json(response, SPOTIFY_SEARCH_FOR_ITEM)
+    
+    else:
+        
+        pick_data = pick_any_data_from_json(response)
     
     return pick_data
 
@@ -119,12 +116,108 @@ def search_track_artist(type, track = None, artist = None, limit = 20, offset = 
 
 # ------------ Search for Track by ID ---------------
 
-def search_track_id(track_id):
+def search_track_id(track_id, lang='ja'):
 
-    headers = get_access_token_no_authentication()
+    headers = create_header(lang=lang)
     
     response = requests.get(SPOTIFY_SEARCH_TRACK_ID_URL + track_id, headers=headers).json()
     
     pick_data = pick_song_data_from_json(response, SPOTIFY_GET_TRACK)
+    
+    return pick_data
+
+
+# ------------ Get Album Data by ID ---------------
+
+def search_album_id(album_id):
+
+    headers = create_header()
+    
+    params = {
+        'limit': 50,
+    }
+    
+    album_response = requests.get(SPOTIFY_SEARCH_ALBUM_ID_URL + album_id, params=params, headers=headers).json()
+    
+    get_tracks = album_response['total_tracks']
+    
+    track_response = requests.get(SPOTIFY_SEARCH_ALBUM_ID_URL + album_id + '/tracks', params=params, headers=headers).json()
+    
+    while len(track_response['items']) < get_tracks:
+        
+        track_params = {
+            'limit': '50',
+            'offset': len(track_response['items']),
+        }
+        
+        track_response['items'] += requests.get(SPOTIFY_SEARCH_ALBUM_ID_URL + album_id + '/tracks', params=track_params, headers=headers).json()['items']
+    
+    pick_data = pick_album_data_from_json(album_response, track_response)
+    
+    return pick_data
+
+
+# ------------ Get Artist Data by ID ---------------
+
+def search_artist_id(artist_id):
+
+    headers = create_header()
+    
+    artist_response = requests.get(SPOTIFY_SEARCH_ARTIST_ID_URL + artist_id, headers=headers).json()
+    
+    track_response = requests.get(SPOTIFY_SEARCH_ARTIST_ID_URL + artist_id + '/top-tracks', headers=headers).json()
+    
+    params = {
+        'include_groups': 'album,single,appears_on,compilation',
+        'limit': 50,
+    }
+    
+    album_response = requests.get(SPOTIFY_SEARCH_ARTIST_ID_URL + artist_id + '/albums', params=params, headers=headers).json()
+    
+    while album_response['next'] != None:
+        
+        params = {
+            'include_groups': 'album,single,appears_on,compilation',
+            'limit': 50,
+            'offset': len(album_response['items']),
+        }
+        
+        response = requests.get(SPOTIFY_SEARCH_ARTIST_ID_URL + artist_id + '/albums', params=params, headers=headers).json()
+        
+        album_response['items'] += response['items']
+        album_response['next'] = response['next']
+    
+    pick_data = pick_artist_data_from_json(artist_response, album_response, track_response)
+    
+    return pick_data
+
+
+# ------------ Get Public Playlist Data by ID ---------------
+
+def search_public_playlist_id(playlist_id):
+
+    headers = create_header()
+    
+    playlist_response = requests.get(SPOTIFY_SEARCH_PUBLIC_PLAYLIST_ID_URL + playlist_id, headers=headers).json()
+    
+    params = {
+        'limit': 50,
+    }
+    
+    tracks_response = requests.get(SPOTIFY_SEARCH_PUBLIC_PLAYLIST_ID_URL + playlist_id + '/tracks', params=params, headers=headers).json()
+    
+    while tracks_response['next'] != None:
+        
+        params = {
+            'limit': 50,
+            'offset': len(tracks_response['items']),
+        }
+        
+        response = requests.get(SPOTIFY_SEARCH_PUBLIC_PLAYLIST_ID_URL + playlist_id + '/tracks', params=params, headers=headers).json()
+        
+        tracks_response['items'] += response['items']
+        tracks_response['next'] = response['next']
+    
+    pick_data = pick_playlist_data_from_json(playlist_response, tracks_response)
     
     return pick_data

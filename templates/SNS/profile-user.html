@@ -1,0 +1,26 @@
+{% extends "SNS/profile.html" %}
+{% load static %}
+{% load humanize %}
+{% block title %}{{ request.user.username }}さんの{{ method_ja }}{{ block.super }}{% endblock %}
+{% block profile %}
+<div class="main">
+    <div class="post">
+        <div class="center">
+            <h2 id="record-song">{{ method_ja }} ({{ response | length }})</h2>
+            <table class="margin-auto">
+                {% for user in response %}
+                    <tr>
+                        <td class="song-table-img"><img src="{{ user.icon }}" id="img" class="new-post-song-img prof-user-img" alt="{{ user.username }}"></td>
+                        <td class="song-table-title">
+                            <div class="search-song-title-artist new-post-song-title-artist">
+                                <a href="{% url "SNS:profile" user.username %}"><p class="new-post-song-title dont-new-line">{{ user.username }}</p>
+                            </div>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <p class="center">{{ method_ja }}がいません</p>
+                {% endfor %}
+            </table>
+        </div>
+</div>
+{% endblock %}

@@ -17,16 +17,19 @@ class ProfileForm(forms.ModelForm):
         widgets = {
             'icon': forms.URLInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control'}),
-            'spotify_id': forms.TextInput(attrs={'class': 'form-control'})
+            'spotify_access_token': forms.TextInput(attrs={'class': 'form-control'}),
+            'spotify_refresh_token': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
 class AddProfileForm(forms.ModelForm):
     
     class Meta():
         model = ProfileData
-        fields = ['icon', 'description', 'spotify_id']
+        fields = ['icon', 'description', 'spotify_access_token', 'spotify_refresh_token']
         labels = {
             'icon': 'Icon',
             'description': 'Description',
-            'spotify_id': 'Spotify ID'
+            'spotify_id': 'Spotify ID',
+            'spotify_access_token': 'Spotify Access Token',
+            'spotify_refresh_token': 'Spotify Refresh Token',
         }

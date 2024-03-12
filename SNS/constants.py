@@ -1,12 +1,47 @@
-# Searrch types for Spotify API
+HOST_URL = 'http://localhost:8000'
+
+
+# Spotify API Constants
+
+SPOTIFY_AUTHENTICATE_SCOPE = 'user-read-playback-state user-read-currently-playing streaming playlist-read-private user-top-read user-read-recently-played user-library-read user-read-private'
+
+
+# Search types for Spotify API
 
 SPOTIFY_SEARCH_TYPE_TRACK = 'track'
 
-SPOTIFY_SEARCH_TYPE_ALBUM = 'album'
+SPOTIFY_SEARCH_TYPE_ALL = 'track,album,artist,playlist'
 
-SPOTIFY_SEARCH_TYPE_ARTIST = 'artist'
+SPOTIFY_REDIRECT_URI = HOST_URL + '/spotify/callback'
 
-SPOTIFY_SEARCH_TYPE_PLAYLIST = 'playlist'
+SPOTIFY_AUTHENTICATION_URL = 'https://accounts.spotify.com/authorize'
+
+SPOTIFY_TOKEN_URL = 'https://accounts.spotify.com/api/token'
+
+SPOTIFY_API_BASE_URL = 'https://api.spotify.com/v1/'
+
+SPOTIFY_SEARCH_TEXT_URL = SPOTIFY_API_BASE_URL + 'search/'
+
+SPOTIFY_SEARCH_TRACK_ID_URL = SPOTIFY_API_BASE_URL + 'tracks/'
+
+SPOTIFY_SEARCH_ALBUM_ID_URL = SPOTIFY_API_BASE_URL + 'albums/'
+
+SPOTIFY_SEARCH_ARTIST_ID_URL = SPOTIFY_API_BASE_URL + 'artists/'
+
+SPOTIFY_SEARCH_PUBLIC_PLAYLIST_ID_URL = SPOTIFY_API_BASE_URL + 'playlists/'
+
+SPOTIFY_USER_PROFILE_URL = SPOTIFY_API_BASE_URL + 'me'
+
+SPOTIFY_SAVED_TRACKS_URL = SPOTIFY_USER_PROFILE_URL + '/tracks'
+
+SPOTIFY_RECENT_PLAY_URL = SPOTIFY_USER_PROFILE_URL + '/player/recently-played'
+
+SPOTIFY_CURRENT_PLAY_URL = SPOTIFY_USER_PROFILE_URL + '/player/currently-playing'
+
+SPOTIFY_SEARCH_TYPE = ['albums', 'artists', 'playlists', 'tracks']
+
+DEFAULT_ARTIST_IMAGE = 'https://music-sns.s3.ap-northeast-1.amazonaws.com/default-artist.png'
+
 
 
 # Response Type
@@ -15,5 +50,7 @@ SPOTIFY_SEARCH_FOR_ITEM = 'search_for_item'
 
 SPOTIFY_GET_TRACK = 'get_track'
 
+SPOTIFY_SAVED_TRACKS = 'saved_tracks'
 
-HOST_URL = 'http://localhost:8000'
+SPOTIFY_RECENT_PLAY = 'recent_play'
+

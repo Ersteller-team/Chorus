@@ -12,12 +12,26 @@ a {
     color: black;
 }
 
+#connect-to-spotify {
+    width: 200px;
+    text-align: center;
+    margin-top: 50px;
+}
+
 @media screen and (max-width: 834px) {
+
+    .post-detail-profile {
+        width: calc(100% + 40px);
+    }
 
     .dont-new-line {
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+    }
+
+    #record-song {
+        font-size: 20px;
     }
 
     input {
@@ -126,6 +140,7 @@ a {
     .song-coverart {
         width: 154px;
         height: 154px;
+        border-radius: 46px;
     }
 
     .song-detail {
@@ -436,6 +451,10 @@ a {
 
     button:disabled {
         color: gray;
+    }
+
+    .prof-user-img {
+        border-radius: 5vw;
     }
 
 }
