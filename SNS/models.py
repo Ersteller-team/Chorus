@@ -5,6 +5,7 @@ class ProfileData(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     icon = models.URLField()
     description = models.TextField(max_length=300)
+    spotify_id = models.CharField(max_length=100, null=True)
     spotify_access_token = models.CharField(max_length=100, null=True)
     spotify_refresh_token = models.CharField(max_length=100, null=True)
     def __str__(self):

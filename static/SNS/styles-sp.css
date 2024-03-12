@@ -18,7 +18,29 @@ a {
     margin-top: 50px;
 }
 
+.control-icon {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.control-icon-button {
+    height: 39px;
+    width: 39px;
+    color: black;
+    font-weight: bold;
+    font-size: 15px;
+    border-radius: 20px;
+    border: none;
+    background-color: #efefef;
+    margin-top: 20px;
+}
+
 @media screen and (max-width: 834px) {
+
+    .control-icon {
+        width: 94vw;
+    }
 
     .post-detail-profile {
         width: calc(100% + 40px);
@@ -140,7 +162,6 @@ a {
     .song-coverart {
         width: 154px;
         height: 154px;
-        border-radius: 46px;
     }
 
     .song-detail {
@@ -455,6 +476,10 @@ a {
 
     .prof-user-img {
         border-radius: 5vw;
+    }
+
+    .prof-icon {
+        border-radius: 46px;
     }
 
 }

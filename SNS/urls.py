@@ -6,7 +6,6 @@ app_name = 'SNS'
 urlpatterns = [
     
     # Main
-    path('api/', views.api_test, name='api_test'),
     path('home/', views.home, name='home'), 
     path('search/', views.search, name='search'),
     path('search/song/<slug:track_id>', views.song, name='song'),

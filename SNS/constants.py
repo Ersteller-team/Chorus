@@ -3,7 +3,7 @@ HOST_URL = 'http://localhost:8000'
 
 # Spotify API Constants
 
-SPOTIFY_AUTHENTICATE_SCOPE = 'user-read-playback-state user-read-currently-playing streaming playlist-read-private user-top-read user-read-recently-played user-library-read user-read-private'
+SPOTIFY_AUTHENTICATE_SCOPE = 'user-read-playback-state user-read-currently-playing streaming playlist-read-private user-top-read user-read-recently-played user-library-read user-read-private user-follow-read'
 
 
 # Search types for Spotify API
@@ -34,9 +34,27 @@ SPOTIFY_USER_PROFILE_URL = SPOTIFY_API_BASE_URL + 'me'
 
 SPOTIFY_SAVED_TRACKS_URL = SPOTIFY_USER_PROFILE_URL + '/tracks'
 
-SPOTIFY_RECENT_PLAY_URL = SPOTIFY_USER_PROFILE_URL + '/player/recently-played'
+SPOTIFY_SAVED_ALBUMS_URL = SPOTIFY_USER_PROFILE_URL + '/albums'
 
-SPOTIFY_CURRENT_PLAY_URL = SPOTIFY_USER_PROFILE_URL + '/player/currently-playing'
+SPOTIFY_FOLLOW_ARTISTS_URL = SPOTIFY_USER_PROFILE_URL + '/following'
+
+SPOTIFY_GET_PLAYLISTS_URL = SPOTIFY_API_BASE_URL + 'users/'
+
+SPOTIFY_CURRENT_PLAY_URL = SPOTIFY_USER_PROFILE_URL + '/player'
+
+SPOTIFY_RECENT_PLAY_URL = SPOTIFY_CURRENT_PLAY_URL + '/recently-played'
+
+SPOTIFY_CONTROL_START_URL = SPOTIFY_CURRENT_PLAY_URL + '/play'
+
+SPOTIFY_CONTROL_PAUSE_URL = SPOTIFY_CURRENT_PLAY_URL + '/pause'
+
+SPOTIFY_CONTROL_NEXT_URL = SPOTIFY_CURRENT_PLAY_URL + '/next'
+
+SPOTIFY_CONTROL_PREVIOUS_URL = SPOTIFY_CURRENT_PLAY_URL + '/previous'
+
+SPOTIFY_CONTROL_REPEAT_URL = SPOTIFY_CURRENT_PLAY_URL + '/repeat'
+
+SPOTIFY_CONTROL_SHUFFLE_URL = SPOTIFY_CURRENT_PLAY_URL + '/shuffle'
 
 SPOTIFY_SEARCH_TYPE = ['albums', 'artists', 'playlists', 'tracks']
 

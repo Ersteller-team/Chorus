@@ -17,9 +17,6 @@ from .forms import AddProfileForm, ProfileForm
 
 # Create your views here.
 
-def api_test(request):
-    return JsonResponse({ 'response': spotify_data.search_query([SPOTIFY_SEARCH_TYPE_TRACK], '米津玄師')})
-
 def home(request):
     
     if request.method == 'GET':
@@ -105,7 +102,7 @@ def song(request, track_id):
             return render(request, 'SNS/song.html', { 
                 'response': response, 
                 'same_response': same_response,
-                'same': not same_response['status']['one'],
+                'same': same_response['status']['total'] >= 2,
                 'follow': follow,
                 'followers': followers,
                 'posts': posts,
@@ -161,7 +158,6 @@ def playlist(request, playlist_id):
         
         response = spotify_data.search_public_playlist_id(playlist_id)
         
-        # return JsonResponse({ 'response': response })
         return render(request, 'SNS/playlist.html', {
             'response': response,
         })
@@ -327,11 +323,17 @@ def spotify(request):
     else:
         
         now_play = spotify_data.get_current_play(user.spotify_access_token, request)
+        # return JsonResponse({ 'response': now_play })
         
         recent_play = spotify_data.get_recent_play(user.spotify_access_token, request, 50)
         
+        library = spotify_data.get_my_library(user.spotify_access_token, request)
+        # return JsonResponse({ 'response': library })
+        
         return render(request, 'SNS/spotify.html', {
             'recent_play': recent_play,
+            'now_play': now_play,
+            'response': library,
         })
 
 
