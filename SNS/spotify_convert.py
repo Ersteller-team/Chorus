@@ -280,36 +280,38 @@ def pick_playlist_data_from_json(playlist_response, tracks_response):
     
     for item in tracks_response['items']:
         
-        song_data = {
-            'id': item['track']['id'],
-            'name': item['track']['name'],
-            'preview': item['track']['preview_url'],
-        }
-        
-        artist_list = []
-        
-        for artist in item['track']['artists']:
+        if item['track'] != None:
             
-            artist_data = {
-                'id': artist['id'],
-                'name': artist['name'],
+            song_data = {
+                'id': item['track']['id'],
+                'name': item['track']['name'],
+                'preview': item['track']['preview_url'],
             }
             
-            artist_list.append(artist_data)
-        
-        album_data = {
-            'id': item['track']['album']['id'],
-            'name': item['track']['album']['name'],
-            'image': item['track']['album']['images'][0]['url'],
-        }
-        
-        track = {
-            'song': song_data,
-            'artist': artist_list,
-            'album': album_data,
-        }
-        
-        response_song_data.append(track)
+            artist_list = []
+            
+            for artist in item['track']['artists']:
+                
+                artist_data = {
+                    'id': artist['id'],
+                    'name': artist['name'],
+                }
+                
+                artist_list.append(artist_data)
+            
+            album_data = {
+                'id': item['track']['album']['id'],
+                'name': item['track']['album']['name'],
+                'image': item['track']['album']['images'][0]['url'],
+            }
+            
+            track = {
+                'song': song_data,
+                'artist': artist_list,
+                'album': album_data,
+            }
+            
+            response_song_data.append(track)
     
     data_length = len(response_song_data)
     
@@ -442,5 +444,17 @@ def pick_any_data_from_json(search_response):
         },
         'data': response_song_data,
     }
+    
+    return response_data
+
+
+# ------------ Pick Current Play Data from JSON ---------------
+
+def pick_current_play_data_from_json(response):
+    
+    response_data = {
+        'premium_user': True,
+        
+    } 
     
     return response_data

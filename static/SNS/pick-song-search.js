@@ -8,6 +8,12 @@ const search_result_table = [
     document.getElementById("search-result-table-albums"),
     document.getElementById("search-result-table-playlists"),
 ];
+const url_type = {
+    'track': 'song',
+    'playlist': 'playlist',
+    'album': 'album',
+    'artist': 'artist'
+}
 const more_button = document.getElementById("more-button");
 const song_id = document.getElementById("song-id");
 const detail = document.getElementById("detail");
@@ -52,6 +58,29 @@ function searchSong(load_times) {
     more_button.innerHTML = 'Loading...';
     more_button.disabled = true;
 
+    search_word = search_text.value;
+
+    var index = search_word.indexOf("spotify.com");
+
+    if (index != -1) {
+    
+        var id = "";
+        var i = 0;
+        location_path = search_word.split('/');
+
+        while (location_path.slice(-1)[0][i] != '?' && i < location_path.slice(-1)[0].length) {
+            id += location_path.slice(-1)[0][i];
+            i++;
+        }
+
+        location.href = url + '/search/' + url_type[location_path.slice(-2)[0]] + '/' + id;
+
+        search_result.innerHTML = 'リダイレクトしています...';
+
+        return;
+
+    }
+
     if (load_times == 0) {
         more_button.style.display = "none";
         for (let i = 0; i < search_type.length; i++) {
@@ -59,8 +88,6 @@ function searchSong(load_times) {
         }
         items = 0;
     }
-
-    search_word = search_text.value;
 
     if (search_word === "") {
         search_result.innerHTML = '検索ワードを入力してください';

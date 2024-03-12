@@ -40,7 +40,7 @@ def refresh_access_token(refresh_token):
 
 # ------------ Create header ---------------
 
-def create_header(access_token = None, request = None):
+def create_header(access_token = None, request = None, lang='ja'):
     
     if access_token == None:
         
@@ -78,8 +78,11 @@ def create_header(access_token = None, request = None):
     
     response = {
         'Authorization': f'Bearer {access_token}',
-        'Accept-Language': 'ja',
     }
+    
+    if lang == 'ja':
+        
+        response['Accept-Language'] = 'ja'
     
     return response
 

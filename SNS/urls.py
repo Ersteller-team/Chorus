@@ -19,6 +19,10 @@ urlpatterns = [
     path('spotify', views.spotify, name='spotify'),
     path('spotify/callback', views.spotify_callback, name='spotify_callback'),
     path('profile/<slug:username>', views.profile, name='profile'),
+    path('profile/<slug:username>/edit', views.profile_edit, name='profile_edit'),
+    path('profile/<slug:username>/song/follow', views.user_song, name='song_follow'),
+    path('profile/<slug:username>/user/follow', views.user_follow, name='user_follow'),
+    path('profile/<slug:username>/user/follower', views.user_follower, name='user_follower'),
     
     # Json Response
     path('check/username/', views.username_check, name='username_check'),

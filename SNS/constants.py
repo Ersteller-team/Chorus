@@ -3,7 +3,7 @@ HOST_URL = 'http://localhost:8000'
 
 # Spotify API Constants
 
-SPOTIFY_AUTHENTICATE_SCOPE = 'user-read-playback-state user-read-currently-playing streaming playlist-read-private user-top-read user-read-recently-played user-library-read'
+SPOTIFY_AUTHENTICATE_SCOPE = 'user-read-playback-state user-read-currently-playing streaming playlist-read-private user-top-read user-read-recently-played user-library-read user-read-private'
 
 
 # Search types for Spotify API
@@ -30,9 +30,13 @@ SPOTIFY_SEARCH_ARTIST_ID_URL = SPOTIFY_API_BASE_URL + 'artists/'
 
 SPOTIFY_SEARCH_PUBLIC_PLAYLIST_ID_URL = SPOTIFY_API_BASE_URL + 'playlists/'
 
-SPOTIFY_SAVED_TRACKS_URL = SPOTIFY_API_BASE_URL + 'me/tracks'
+SPOTIFY_USER_PROFILE_URL = SPOTIFY_API_BASE_URL + 'me'
 
-SPOTIFY_RECENT_PLAY_URL = SPOTIFY_API_BASE_URL + 'me/player/recently-played'
+SPOTIFY_SAVED_TRACKS_URL = SPOTIFY_USER_PROFILE_URL + '/tracks'
+
+SPOTIFY_RECENT_PLAY_URL = SPOTIFY_USER_PROFILE_URL + '/player/recently-played'
+
+SPOTIFY_CURRENT_PLAY_URL = SPOTIFY_USER_PROFILE_URL + '/player/currently-playing'
 
 SPOTIFY_SEARCH_TYPE = ['albums', 'artists', 'playlists', 'tracks']
 

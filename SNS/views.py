@@ -98,14 +98,22 @@ def song(request, track_id):
                     'replies': replies,
                 })
             
+            en_response = spotify_data.search_track_id(track_id, 'en')
+            
+            same_response = spotify_data.search_track_artist(SPOTIFY_SEARCH_TYPE_TRACK, en_response['data'][0]['song']['name'], en_response['data'][0]['artist'][0]['name'], 20, 0)
+            
             return render(request, 'SNS/song.html', { 
                 'response': response, 
+                'same_response': same_response,
+                'same': not same_response['status']['one'],
                 'follow': follow,
                 'followers': followers,
                 'posts': posts,
             })
     
     elif request.method == 'POST':
+        
+        song = spotify_data.search_track_id(track_id)
         
         follow = MusicFollowData.objects.filter(user_id=request.user.id, music_id=track_id).exists()
         
@@ -116,9 +124,13 @@ def song(request, track_id):
             MusicFollowData.objects.create(
                 user_id = request.user.id,
                 music_id = track_id,
+                song_name = song['data'][0]['song']['name'],
+                artist_name = song['data'][0]['artist'][0]['name'],
+                album_name = song['data'][0]['album']['name'],
+                image = song['data'][0]['album']['image'],
             )
         
-        return redirect(HOST_URL + '/song/' + track_id)
+        return redirect(HOST_URL + '/search/song/' + track_id)
 
 
 def album(request, album_id):
@@ -231,7 +243,7 @@ def post(request):
                 original_post_id = reply_to,
             )
         
-        return redirect(HOST_URL + '/song/' + song_id)
+        return redirect(HOST_URL + '/search/song/' + song_id)
 
 
 @login_required
@@ -314,10 +326,13 @@ def spotify(request):
     
     else:
         
-        response = spotify_data.get_recent_play(user.spotify_access_token, request, 50)
+        now_play = spotify_data.get_current_play(user.spotify_access_token, request)
         
-        return JsonResponse({ 'response': response })
-        return render(request, 'SNS/spotify.html')
+        recent_play = spotify_data.get_recent_play(user.spotify_access_token, request, 50)
+        
+        return render(request, 'SNS/spotify.html', {
+            'recent_play': recent_play,
+        })
 
 
 @login_required
@@ -340,8 +355,178 @@ def spotify_callback(request):
 
 
 def profile(request, username):
-    return render(request, 'SNS/profile.html')
+    
+    if request.method == 'GET':
+        
+        user_obj = User.objects.get(username=username)
+        
+        song_follow = MusicFollowData.objects.filter(user_id=user_obj.id).count()
+        
+        user_follow = UserFollowData.objects.filter(user_id=user_obj.id).count()
+        
+        follower = UserFollowData.objects.filter(opponent_id=user_obj.id).count()
+        
+        profile = ProfileData.objects.get(user_id=user_obj.id)
+        
+        posts_data = PostData.objects.filter(Q(user_id=user_obj.id) & Q(original_post_id=None)).order_by('-created_at')
+        
+        posts = []
+        
+        for post in posts_data:
+            
+            posts.append({
+                'id': post.id,
+                'username': user_obj.username,
+                'user_id': post.user_id,
+                'date': post.created_at,
+                'good': GoodData.objects.filter(post_id=post.id).count(),
+                'good_status': GoodData.objects.filter(post_id=post.id, gooded_id=request.user.id).exists(),
+                'text': post.contents,
+                'song_id': post.music_id,
+                'song': post.song_name,
+                'artist': post.artist_name,
+                'album': post.album_name,
+                'image': post.image,
+            })
+        
+        follow = UserFollowData.objects.filter(user_id=request.user.id, opponent_id=user_obj.id).exists()
+        
+        return render(request, 'SNS/profile-post.html', {
+            'user_obj': user_obj,
+            'profile': profile,
+            'song_follow': song_follow,
+            'user_follow': user_follow,
+            'follow': follow,
+            'follower': follower,
+            'posts': posts,
+        })
+    
+    elif request.method == 'POST':
+        
+        opponent = request.POST['user_id']
+        status = request.POST['status']
+        
+        if status == 'true':
+            UserFollowData.objects.filter(user_id=request.user.id, opponent_id=opponent).delete()
+        
+        else:
+            UserFollowData.objects.create(
+                user_id = request.user.id,
+                opponent_id = opponent,
+            )
+        
+        user_obj = User.objects.get(id=opponent)
+        
+        return redirect(HOST_URL + '/profile/' + user_obj.username)
 
+
+def user_song(request, username):
+    
+    user_obj = User.objects.get(username=username)
+    
+    song_follow = MusicFollowData.objects.filter(user_id=user_obj.id).count()
+    
+    user_follow = UserFollowData.objects.filter(user_id=user_obj.id).count()
+    
+    follower = UserFollowData.objects.filter(opponent_id=user_obj.id).count()
+    
+    profile = ProfileData.objects.get(user_id=user_obj.id)
+    
+    follow = UserFollowData.objects.filter(user_id=request.user.id, opponent_id=user_obj.id).exists()
+    
+    response = MusicFollowData.objects.filter(user_id=user_obj.id)
+    
+    return render(request, 'SNS/profile-song.html', {
+            'user_obj': user_obj,
+            'profile': profile,
+            'song_follow': song_follow,
+            'user_follow': user_follow,
+            'follow': follow,
+            'follower': follower,
+            'response': response,
+        })
+
+
+def user_follow(request, username):
+    
+    user_obj = User.objects.get(username=username)
+    
+    song_follow = MusicFollowData.objects.filter(user_id=user_obj.id).count()
+    
+    user_follow = UserFollowData.objects.filter(user_id=user_obj.id).count()
+    
+    follower = UserFollowData.objects.filter(opponent_id=user_obj.id).count()
+    
+    followed = UserFollowData.objects.filter(user_id=request.user.id)
+    
+    follow = UserFollowData.objects.filter(user_id=request.user.id, opponent_id=user_obj.id).exists()
+    
+    profile = ProfileData.objects.get(user_id=user_obj.id)
+    
+    no = UserFollowData.objects.filter(user_id=user_obj.id)
+    
+    response = []
+    for i in no:
+        user = User.objects.get(id=i.opponent_id)
+        prof = ProfileData.objects.get(user_id=i.opponent_id)
+        response.append({
+            'id': i.user_id,
+            'username': user.username,
+            'icon': prof.icon,
+        })
+    
+    return render(request, 'SNS/profile-user.html', {
+        'response': response,
+        'user_obj': user_obj,
+        'profile': profile,
+        'song_follow': song_follow,
+        'user_follow': user_follow,
+        'follower': follower,
+        'username': username,
+        'followed': followed,
+        'follow': follow,
+        'method': 'follow',
+        'method_ja': 'フォロー',
+    })
+
+
+def user_follower(request, username):
+    
+    user_obj = User.objects.get(username=username)
+    
+    song_follow = MusicFollowData.objects.filter(user_id=user_obj.id).count()
+    
+    user_follow = UserFollowData.objects.filter(user_id=user_obj.id).count()
+    
+    follower = UserFollowData.objects.filter(opponent_id=user_obj.id).count()
+    
+    follow = UserFollowData.objects.filter(user_id=request.user.id, opponent_id=user_obj.id).exists()
+    
+    profile = ProfileData.objects.get(user_id=user_obj.id)
+    
+    no = UserFollowData.objects.filter(opponent_id=user_obj.id)
+    
+    response = []
+    for i in no:
+        user = User.objects.get(id=i.user_id)
+        prof = ProfileData.objects.get(user_id=i.user_id)
+        response.append({
+            'id': i.user_id,
+            'username': user.username,
+            'icon': prof.icon,
+        })
+    return render(request, 'SNS/profile-user.html', {
+        'response': response,
+        'user_obj': user_obj,
+        'profile': profile,
+        'song_follow': song_follow,
+        'user_follow': user_follow,
+        'follower': follower,
+        'follow': follow,
+        'username': username,
+        'method': 'follower',
+        'method_ja': 'フォロワー',
+    })
 
 
 # Json Response
@@ -390,14 +575,14 @@ def randomname(n):
     return ''.join(randlst)
 
 
-def upload_file_to_s3(file):
+def upload_file_to_s3(file, file_name=None):
     im = Image.open(file)
     image_size = im.size
     if image_size[0] <= image_size[1]:
         min_size = image_size[0]
     else:
         min_size = image_size[1]
-    im_crop = im.crop((image_size[1] / 2 - min_size / 2, image_size[0] / 2 - min_size / 2, image_size[1] / 2 + min_size / 2, image_size[0] / 2 + min_size / 2))
+    im_crop = im.crop((image_size[0] / 2 - min_size / 2, image_size[1] / 2 - min_size / 2, image_size[0] / 2 + min_size / 2, image_size[1] / 2 + min_size / 2))
     im_resize = im_crop.resize((200, 200))
     s3 = boto3.client('s3',
                       aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
@@ -405,13 +590,45 @@ def upload_file_to_s3(file):
                       region_name=settings.AWS_S3_REGION_NAME)
     bucket_name = settings.AWS_STORAGE_BUCKET_NAME
     extension = file.name.split('.')[-1]
-    file_name = f"{randomname(50)}.{extension}"
+    if file_name == None:
+        file_name = f"{randomname(50)}.{extension}"
     byte_file = BytesIO()
     im_resize.save(byte_file, format='PNG')
     byte_file.seek(0)
     s3.upload_fileobj(byte_file, bucket_name, file_name)
     s3_link = f"https://{bucket_name}.s3.amazonaws.com/{file_name}"
     return s3_link
+
+
+def profile_edit(request, username):
+    
+    if request.user.username == username:
+        
+        user = User.objects.get(username=username)
+        prof = ProfileData.objects.get(user_id=user.id)
+        
+        if request.method == 'GET':
+            
+            return render(request, 'SNS/profile-edit.html', {
+                'user_obj': user,
+                'profile': prof,
+            })
+        
+        elif request.method == 'POST':
+            
+            if 'icon' in request.FILES:
+                file_name = None
+                if prof.icon != 'https://music-sns.s3.ap-northeast-1.amazonaws.com/default.png':
+                    file_name = prof.icon.split('/')[-1]
+                file = request.FILES['icon']
+                s3_link = upload_file_to_s3(file, file_name)
+                prof.icon = s3_link
+            
+            prof.description = request.POST['description']
+            
+            prof.save()
+            
+            return redirect(HOST_URL + '/profile/' + username)
 
 
 class  AccountRegistration(TemplateView):

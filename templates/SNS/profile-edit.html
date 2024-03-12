@@ -1,0 +1,28 @@
+{% extends "SNS/layout.html" %}
+{% load static %}
+{% block title %}Edit Profile{{ block.super }}{% endblock %}
+{% block main %}
+<div class="main">
+    <div id="new-post-text">
+        <h1 class="new-post-title">Edit Profile</h1>
+        <div class="signup-form">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-content">
+                    <h2>Icon</h2>
+                    <img src="{{ profile.icon }}" class="song-coverart">
+                    <input type="file" name="icon" style="display:block">
+                </div>
+                <div class="form-content">
+                    <h2>Description</h2>
+                    <textarea name="description" cols="40" rows="10" maxlength="300" id="id_description" placeholder="自己紹介を入力...">{% if profile.description != "None" %}{{ profile.description }}{% endif %}</textarea>
+                </div>
+                <div class="signup-parent">
+                    <input type="submit" value="Save" id="signup" class="new-post-submit">
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src={% static 'SNS/signup.js' %}></script>
+</div>
+{% endblock %}

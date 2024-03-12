@@ -1,0 +1,51 @@
+{% extends "SNS/profile.html" %}
+{% load static %}
+{% load humanize %}
+{% block title %}{{ request.user.username }}さんの投稿{{ block.super }}{% endblock %}
+{% block profile %}
+<div class="main">
+    <div class="post">
+        <div class="post-top">
+            <h2 class="post-title">投稿({{ posts | length | intcomma }})</h2>
+        </div>
+            {% for post in posts %}
+                <div class="post-detail">
+                    <div class="post-user">
+                        <img src="{{ profile.icon }}" class="profile-icon post-profile-icon">
+                        <a href="{% url 'SNS:profile' post.username %}" class="post-username">{{ post.username }}</a>
+                        <p class="post-date">{{ post.date | naturaltime }}</p>
+                    </div>
+                    <p class="post-text">{{ post.text }}</p>
+                    <table class="margin-auto">
+                        <tr>
+                            <td class="song-table-img"><img src="{{ post.image }}" id="img" class="new-post-song-img" alt="{{ post.song }}"></td>
+                            <td class="song-table-title">
+                                <div class="search-song-title-artist new-post-song-title-artist">
+                                    <a href="{% url "SNS:song" post.song_id %}"><p class="new-post-song-title dont-new-line">{{ post.song }}</p>
+                                    <a href="{% url "SNS:song" post.song_id %}"><p class="new-post-song-artist dont-new-line">{{ post.artist }} / {{ post.album }}</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="post-reaction">
+                        {% if post.good_status %}
+                            <button class="post-reaction-button liked" type="button" id="good-{{ post.id }}" onclick="good('gooded', '{{ post.id }}', '{{ request.user.id }}', '{{ post.user_id }}');"> {{ post.good | intcomma }}</button>
+                        {% else %}
+                            <button class="post-reaction-button like" type="button" id="good-{{ post.id }}" onclick="good('good', '{{ post.id }}', '{{ request.user.id }}', '{{ post.user_id }}');"> {{ post.good | intcomma }}</button>
+                        {% endif %}
+                        <button class="post-reaction-button comment" type="button" onclick="location.href='{% url 'SNS:post' %}?reply_to={{ post.id }}&song_id={{ response.data.0.song.id }}';"> {{ post.replies | length }}</button>
+                        {% if post.username == request.user.username %}
+                            <button class="post-reaction-button edit" type="button" onclick="location.href='{% url 'SNS:post' %}?post_id={{ post.id }}&song_id={{ response.data.0.song.id }}';"></button>
+                            <button class="post-reaction-button delete" type="button" onclick="deletePost('{{ post.id }}', '{{ request.user.id }}');"></button>
+                        {% endif %}
+                    </div>
+                </div>
+            {% empty %}
+                <div class="home-no-post">
+                    <h1>投稿がありません</h1>
+                </div>
+            {% endfor %}
+        </div>
+    <script src="{% static 'SNS/song.js' %}"></script>
+</div>
+{% endblock %}

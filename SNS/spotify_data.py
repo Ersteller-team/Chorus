@@ -5,6 +5,37 @@ from .spotify_token import *
 
 # Need User Data
 
+# ------------ Get Now Play Data ---------------
+
+def get_current_play(access_token, request):
+    
+    headers = create_header(access_token, request)
+    
+    response = requests.get(SPOTIFY_USER_PROFILE_URL, headers=headers)
+    
+    if response['product'] == 'premium':
+        
+        params = {
+            'additional_types': 'track',
+        }
+        
+        response = requests.get(SPOTIFY_CURRENT_PLAY_URL, params=params, headers=headers)
+        
+        if response.status_code == 204:
+            
+            pick_data = { 'premium_user': True, 'playing': False }
+        
+        else:
+            
+            pick_data = pick_current_play_data_from_json(response.json())
+    
+    else:
+        
+        pick_data = { 'premium_user': False }
+    
+    return pick_data
+
+
 # ------------ Get Recent Play Data ---------------
 
 def get_recent_play(access_token, request, limit = 20):
@@ -56,9 +87,14 @@ def search_query(type, query, limit = 20, offset = 0):
     }
     
     response = requests.get(SPOTIFY_SEARCH_TEXT_URL, params=search_params, headers=headers).json()
-    # return response
     
-    pick_data = pick_any_data_from_json(response)
+    if type == SPOTIFY_SEARCH_TYPE_TRACK:
+        
+        pick_data = pick_song_data_from_json(response, SPOTIFY_SEARCH_FOR_ITEM)
+    
+    else:
+        
+        pick_data = pick_any_data_from_json(response)
     
     return pick_data
 
@@ -80,9 +116,9 @@ def search_track_artist(type, track = None, artist = None, limit = 20, offset = 
 
 # ------------ Search for Track by ID ---------------
 
-def search_track_id(track_id):
+def search_track_id(track_id, lang='ja'):
 
-    headers = create_header()
+    headers = create_header(lang=lang)
     
     response = requests.get(SPOTIFY_SEARCH_TRACK_ID_URL + track_id, headers=headers).json()
     
