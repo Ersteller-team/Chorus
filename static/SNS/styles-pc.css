@@ -109,6 +109,28 @@ a:hover {
     text-decoration: underline;
 }
 
+.button-select {
+    background-color: rgb(52, 52, 52);
+    color: white;
+}
+
+.song-type-select {
+    height: 39px;
+    width: fit-content;
+    font-weight: bold;
+    font-size: 15px;
+    border-radius: 20px;
+    border: none;
+    padding: 0 20px;
+}
+
+.button-bar {
+    width: 95%;
+    overflow-x: scroll;
+    white-space: nowrap;
+    margin: 0 2.5%;
+}
+
 
 @media screen and (min-width: 834px) {
 

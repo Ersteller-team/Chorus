@@ -2,12 +2,18 @@ const text_part = document.getElementById("new-post-text");
 const song_list_part = document.getElementById("new-post-song-list");
 const search_text = document.getElementById("search-text");
 const search_result = document.getElementById("search-result");
-const search_result_table = document.getElementById("search-result-table");
+const search_result_table = [
+    document.getElementById("search-result-table-tracks"),
+    document.getElementById("search-result-table-artists"),
+    document.getElementById("search-result-table-albums"),
+    document.getElementById("search-result-table-playlists"),
+];
 const more_button = document.getElementById("more-button");
 const song_id = document.getElementById("song-id");
 const detail = document.getElementById("detail");
 const submit = document.getElementById("submit");
 const url = location.protocol + '//' + location.host;
+const search_type = ['tracks', 'artists', 'albums', 'playlists'];
 let inner_width, search_word, items;
 
 function switchDisplay(id) {
@@ -21,6 +27,26 @@ function switchDisplay(id) {
     }
 }
 
+function display(page) {
+
+    for (let i = 0; i < search_type.length; i++) {
+
+        if (page === i) {
+
+            document.getElementById('search-button-' + search_type[i]).classList.add("button-select");
+            document.getElementById('search-result-table-' + search_type[i]).style.display = "";
+
+        } else {
+
+            document.getElementById('search-button-' + search_type[i]).classList.remove("button-select");
+            document.getElementById('search-result-table-' + search_type[i]).style.display = "none";
+
+        }
+
+    }
+
+}
+
 function searchSong(load_times) {
 
     more_button.innerHTML = 'Loading...';
@@ -28,7 +54,9 @@ function searchSong(load_times) {
 
     if (load_times == 0) {
         more_button.style.display = "none";
-        search_result_table.innerHTML = '';
+        for (let i = 0; i < search_type.length; i++) {
+            search_result_table[i].innerHTML = '';
+        }
         items = 0;
     }
 
@@ -43,35 +71,95 @@ function searchSong(load_times) {
 
     search_result.innerHTML = 'データ取得中です...';
 
-    request.open('GET', url + '/search/song/?query=' + search_word + '&offset=' + String(load_times * 20), true);
+    request.open('GET', url + '/search/any/?query=' + search_word + '&offset=' + String(load_times * 20), true);
     request.responseType = 'json';
 
     request.onload = function() {
         if (request.status === 200) {
             if (request.response['response']['status']['success']) {
-                items += request.response['response']['status']['total'];
-                search_result.innerHTML = items + '件の楽曲が見つかりました';
-                for (var i = 0; i < request.response['response']['status']['total']; i++) {
-                    var img = request.response['response']['data'][i]['album']['image'];
-                    var title = request.response['response']['data'][i]['song']['name'];
-                    var id = request.response['response']['data'][i]['song']['id'];
-                    var artist = request.response['response']['data'][i]['artist'][0]['name'];
-                    for (var j = 1; j < request.response['response']['data'][i]['artist'].length; j++) {
-                        artist += ', ' + request.response['response']['data'][i]['artist'][j]['name'];
+                search_result.innerHTML = '';
+
+                res_data = request.response['response']['data'];
+
+                for (var i = 0; i < res_data['tracks'].length; i++) {
+
+                    var img = res_data['tracks'][i]['album']['image'];
+                    var id = res_data['tracks'][i]['track']['id'];
+                    var title = res_data['tracks'][i]['track']['name'];
+                    var artist = res_data['tracks'][i]['artist'][0]['name'];
+                    for (var j = 1; j < res_data['tracks'][i]['artist'].length; j++) {
+                        artist += ', ' + res_data['tracks'][i]['artist'][j]['name'];
                     }
-                    var album = request.response['response']['data'][i]['album']['name'];
-                    search_result_table.innerHTML += `<tr>
+                    var album = res_data['tracks'][i]['album']['name'];
+                    
+                    search_result_table[0].innerHTML += `<tr>
                         <td class="song-table-img"><img src="` + img + `" id="img" class="new-post-song-img" alt="` + title + `"></td>
-                        <td class="song-table-title"><div class="search-song-title-artist new-post-song-title-artist">
-                            <a href="`+ url + `/search/song/` + id + `"><p class="new-post-song-title dont-new-line">` + title + `</p>
-                            <a href="`+ url + `/search/song/` + id + `"><p class="new-post-song-artist dont-new-line">` + artist + ` / ` + album + `</p>
-                        </div></td>
+                        <td class="song-table-title">
+                            <div class="search-song-title-artist new-post-song-title-artist">
+                                <a href="` + url + `/search/song/` + id + `"><p class="new-post-song-title dont-new-line">` + title + `</p>
+                                <a href="` + url + `/search/song/` + id + `"><p class="new-post-song-artist dont-new-line">` + artist + ` / ` + album + `</p>
+                            </div>
+                        </td>
                     </tr>`;
-                    more_button.style.display = "block";
-                    more_button.innerHTML = 'More';
-                    more_button.setAttribute('onclick', 'searchSong(' + String(load_times + 1) + ')');
-                    more_button.disabled = false;
+
                 }
+
+                for (var i = 0; i < res_data['artists'].length; i++) {
+
+                    var img = res_data['artists'][i]['artist']['image'];
+                    var id = res_data['artists'][i]['artist']['id'];
+                    var artist = res_data['artists'][i]['artist']['name'];
+                    
+                    search_result_table[1].innerHTML += `<tr>
+                        <td class="song-table-img"><img src="` + img + `" id="img" class="new-post-song-img" alt="` + artist + `"></td>
+                        <td class="song-table-title">
+                            <div class="search-song-title-artist new-post-song-title-artist">
+                                <a href="` + url + `/search/artist/` + id + `"><p class="new-post-song-title dont-new-line">` + artist + `</p>
+                            </div>
+                        </td>
+                    </tr>`;
+
+                }
+
+                for (var i = 0; i < res_data['albums'].length; i++) {
+
+                    var img = res_data['albums'][i]['album']['image'];
+                    var id = res_data['albums'][i]['album']['id'];
+                    var album = res_data['albums'][i]['album']['name'];
+                    var artist = res_data['albums'][i]['artist'][0]['name'];
+                    for (var j = 1; j < res_data['albums'][i]['artist'].length; j++) {
+                        artist += ', ' + res_data['albums'][i]['artist'][j]['name'];
+                    }
+                    
+                    search_result_table[2].innerHTML += `<tr>
+                        <td class="song-table-img"><img src="` + img + `" id="img" class="new-post-song-img" alt="` + album + `"></td>
+                        <td class="song-table-title">
+                            <div class="search-song-title-artist new-post-song-title-artist">
+                                <a href="` + url + `/search/album/` + id + `"><p class="new-post-song-title dont-new-line">` + album + `</p>
+                                <a href="` + url + `/search/album/` + id + `"><p class="new-post-song-artist dont-new-line">` + artist + `</p>
+                            </div>
+                        </td>
+                    </tr>`;
+
+                }
+
+                for (var i = 0; i < res_data['playlists'].length; i++) {
+
+                    var img = res_data['playlists'][i]['playlist']['image'];
+                    var id = res_data['playlists'][i]['playlist']['id'];
+                    var name = res_data['playlists'][i]['playlist']['name'];
+                    
+                    search_result_table[3].innerHTML += `<tr>
+                        <td class="song-table-img"><img src="` + img + `" id="img" class="new-post-song-img" alt="` + name + `"></td>
+                        <td class="song-table-title">
+                            <div class="search-song-title-artist new-post-song-title-artist">
+                                <a href="` + url + `/search/playlist/` + id + `"><p class="new-post-song-title dont-new-line">` + name + `</p>
+                            </div>
+                        </td>
+                    </tr>`;
+
+                }
+            
             } else {
                 search_result.innerHTML = '楽曲が見つかりませんでした';
             }

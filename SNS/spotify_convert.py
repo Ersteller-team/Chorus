@@ -40,7 +40,7 @@ def pick_song_data_from_json(data, type):
             album_data = {
                 'id': item['album']['id'],
                 'name': item['album']['name'],
-                'image': item['album']['images'][1]['url'],
+                'image': item['album']['images'][0]['url'],
             }
             
             track = {
@@ -75,7 +75,7 @@ def pick_song_data_from_json(data, type):
             album_data = {
                 'id': item['track']['album']['id'],
                 'name': item['track']['album']['name'],
-                'image': item['track']['album']['images'][1]['url'],
+                'image': item['track']['album']['images'][0]['url'],
             }
             
             track = {
@@ -164,7 +164,7 @@ def pick_album_data_from_json(album_data, track_data):
         'album': {
             'id': album_data['id'],
             'name': album_data['name'],
-            'image': album_data['images'][1]['url'],
+            'image': album_data['images'][0]['url'],
             'artist': artist_list,
         },
         'songs': response_song_data,
@@ -186,7 +186,7 @@ def pick_artist_data_from_json(artist_res_data, album_data, track_data):
         album_data = {
             'id': item['id'],
             'name': item['name'],
-            'image': item['images'][1]['url'],
+            'image': item['images'][0]['url'],
         }
         
         artist_list = []
@@ -230,7 +230,7 @@ def pick_artist_data_from_json(artist_res_data, album_data, track_data):
         album_data = {
             'id': item['album']['id'],
             'name': item['album']['name'],
-            'image': item['album']['images'][1]['url'],
+            'image': item['album']['images'][0]['url'],
         }
         
         track = {
@@ -257,10 +257,180 @@ def pick_artist_data_from_json(artist_res_data, album_data, track_data):
         'artist': {
             'id': artist_res_data['id'],
             'name': artist_res_data['name'],
-            'image': artist_res_data['images'][1]['url'],
+            'image': artist_res_data['images'][0]['url'],
         },
         'albums': response_album_data,
         'songs': response_song_data,
+    }
+    
+    return response_data
+
+
+# ------------ Pick Playlist Data from JSON ---------------
+
+def pick_playlist_data_from_json(playlist_response, tracks_response):
+    
+    response_data = {}
+    response_song_data = []
+    
+    for item in tracks_response['items']:
+        
+        song_data = {
+            'id': item['track']['id'],
+            'name': item['track']['name'],
+            'preview': item['track']['preview_url'],
+        }
+        
+        artist_list = []
+        
+        for artist in item['track']['artists']:
+            
+            artist_data = {
+                'id': artist['id'],
+                'name': artist['name'],
+            }
+            
+            artist_list.append(artist_data)
+        
+        album_data = {
+            'id': item['track']['album']['id'],
+            'name': item['track']['album']['name'],
+            'image': item['track']['album']['images'][0]['url'],
+        }
+        
+        track = {
+            'song': song_data,
+            'artist': artist_list,
+            'album': album_data,
+        }
+        
+        response_song_data.append(track)
+    
+    data_length = len(response_song_data)
+    
+    if 'offset' in tracks_response:
+        offset = tracks_response['offset']
+    else:
+        offset = 0
+    
+    response_data = { 
+        'status': {
+            'success': data_length != 0,
+            'one': data_length == 1,
+            'total': data_length,
+            'offset': offset,
+        },
+        'playlist': {
+            'id': playlist_response['id'],
+            'name': playlist_response['name'],
+            'image': playlist_response['images'][0]['url'],
+        },
+        'songs': response_song_data,
+    }
+    
+    return response_data
+
+
+# ------------ Pick Any Data from JSON ---------------
+
+def pick_any_data_from_json(search_response):
+    
+    response_data = {}
+    response_song_data = {}
+    
+    for data_type in SPOTIFY_SEARCH_TYPE:
+    
+        response_song_data[data_type] = []
+        
+        for item in search_response[data_type]['items']:
+            
+            if data_type != 'playlists' and data_type != 'artists':
+                
+                artist_list = []
+                
+                for artist in item['artists']:
+                    
+                    artist_data = {
+                        'id': artist['id'],
+                        'name': artist['name'],
+                    }
+                    
+                    if data_type == 'artists':
+                        
+                        artist_data['image'] = artist['images'][0]['url']
+                    
+                    artist_list.append(artist_data)
+            
+            elif data_type == 'artists':
+                
+                artist_data = {
+                    'id': item['id'],
+                    'name': item['name'],
+                    'image': item['images'][0]['url'],
+                }
+            
+            if data_type == 'artists':
+                
+                pick_data = {
+                    'artist': artist_data,
+                }
+            
+            elif data_type == 'albums':
+                
+                album_data = {
+                    'id': item['id'],
+                    'name': item['name'],
+                    'image': item['images'][0]['url'],
+                }
+                
+                pick_data = {
+                    'artist': artist_list,
+                    'album': album_data,
+                }
+            
+            elif data_type == 'tracks':
+                
+                album_data = {
+                    'id': item['album']['id'],
+                    'name': item['album']['name'],
+                    'image': item['album']['images'][0]['url'],
+                }
+                
+                track_data = {
+                    'id': item['id'],
+                    'name': item['name'],
+                    'preview': item['preview_url'],
+                }
+                
+                pick_data = {
+                    'artist': artist_list,
+                    'album': album_data,
+                    'track': track_data,
+                }
+            
+            elif data_type == 'playlists':
+                
+                playlist_data = {
+                    'id': item['id'],
+                    'name': item['name'],
+                    'image': item['images'][0]['url'],
+                }
+                
+                pick_data = {
+                    'playlist': playlist_data,
+                }
+            
+            response_song_data[data_type].append(pick_data)
+    
+    data_length = max([len(response_song_data[data_type]) for data_type in SPOTIFY_SEARCH_TYPE])
+    
+    response_data = { 
+        'status': {
+            'success': data_length != 0,
+            'one': data_length == 1,
+            'total': data_length,
+        },
+        'data': response_song_data,
     }
     
     return response_data

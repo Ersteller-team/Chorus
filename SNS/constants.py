@@ -10,11 +10,7 @@ SPOTIFY_AUTHENTICATE_SCOPE = 'user-read-playback-state user-read-currently-playi
 
 SPOTIFY_SEARCH_TYPE_TRACK = 'track'
 
-SPOTIFY_SEARCH_TYPE_ALBUM = 'album'
-
-SPOTIFY_SEARCH_TYPE_ARTIST = 'artist'
-
-SPOTIFY_SEARCH_TYPE_PLAYLIST = 'playlist'
+SPOTIFY_SEARCH_TYPE_ALL = 'track,album,artist,playlist'
 
 SPOTIFY_REDIRECT_URI = HOST_URL + '/spotify/callback'
 
@@ -32,9 +28,13 @@ SPOTIFY_SEARCH_ALBUM_ID_URL = SPOTIFY_API_BASE_URL + 'albums/'
 
 SPOTIFY_SEARCH_ARTIST_ID_URL = SPOTIFY_API_BASE_URL + 'artists/'
 
+SPOTIFY_SEARCH_PUBLIC_PLAYLIST_ID_URL = SPOTIFY_API_BASE_URL + 'playlists/'
+
 SPOTIFY_SAVED_TRACKS_URL = SPOTIFY_API_BASE_URL + 'me/tracks'
 
 SPOTIFY_RECENT_PLAY_URL = SPOTIFY_API_BASE_URL + 'me/player/recently-played'
+
+SPOTIFY_SEARCH_TYPE = ['albums', 'artists', 'playlists', 'tracks']
 
 
 

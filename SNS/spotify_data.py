@@ -56,8 +56,9 @@ def search_query(type, query, limit = 20, offset = 0):
     }
     
     response = requests.get(SPOTIFY_SEARCH_TEXT_URL, params=search_params, headers=headers).json()
+    # return response
     
-    pick_data = pick_song_data_from_json(response, SPOTIFY_SEARCH_FOR_ITEM)
+    pick_data = pick_any_data_from_json(response)
     
     return pick_data
 
@@ -151,5 +152,36 @@ def search_artist_id(artist_id):
         album_response['next'] = response['next']
     
     pick_data = pick_artist_data_from_json(artist_response, album_response, track_response)
+    
+    return pick_data
+
+
+# ------------ Get Public Playlist Data by ID ---------------
+
+def search_public_playlist_id(playlist_id):
+
+    headers = create_header()
+    
+    playlist_response = requests.get(SPOTIFY_SEARCH_PUBLIC_PLAYLIST_ID_URL + playlist_id, headers=headers).json()
+    
+    params = {
+        'limit': 50,
+    }
+    
+    tracks_response = requests.get(SPOTIFY_SEARCH_PUBLIC_PLAYLIST_ID_URL + playlist_id + '/tracks', params=params, headers=headers).json()
+    
+    while tracks_response['next'] != None:
+        
+        params = {
+            'limit': 50,
+            'offset': len(tracks_response['items']),
+        }
+        
+        response = requests.get(SPOTIFY_SEARCH_PUBLIC_PLAYLIST_ID_URL + playlist_id + '/tracks', params=params, headers=headers).json()
+        
+        tracks_response['items'] += response['items']
+        tracks_response['next'] = response['next']
+    
+    pick_data = pick_playlist_data_from_json(playlist_response, tracks_response)
     
     return pick_data

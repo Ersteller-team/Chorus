@@ -1,17 +1,25 @@
 {% extends "SNS/layout.html" %}
 {% load static %}
-{% block title %}New Post{{block.super}}{% endblock %}
+{% block title %}Search{{block.super}}{% endblock %}
 {% block main %}
     <div id="search-song-list">
         <div class="search-box">
             <div class="search-bar-search">
                 <input type="text" id="search-text" class="song-search" placeholder="検索..." onchange="searchSong(0);">
+                <div class="button-bar">
+                    <button id="search-button-tracks" class="song-type-select button-select" type="button" onclick="display(0);">Tracks</button>
+                    <button id="search-button-artists" class="song-type-select" type="button" onclick="display(1);">Artists</button>
+                    <button id="search-button-albums" class="song-type-select" type="button" onclick="display(2);">Albums</button>
+                    <button id="search-button-playlists" class="song-type-select" type="button" onclick="display(3);">Playlists</button>
+                </div>
                 <div id="search-result">
                     曲を検索してください
                 </div>
             </div>
-            <table id="search-result-table">
-            </table>
+            <table class="margin-auto" id="search-result-table-tracks"></table>
+            <table class="margin-auto" id="search-result-table-artists"></table>
+            <table class="margin-auto" id="search-result-table-albums"></table>
+            <table class="margin-auto" id="search-result-table-playlists"></table>
             <div class="center">
                 <button id="more-button" class="new-post-song-select" type="button" onclick="searchSong(1);">More</button>
             </div>

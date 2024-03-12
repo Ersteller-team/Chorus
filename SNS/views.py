@@ -41,7 +41,10 @@ def home(request):
 
 
 def search(request):
-    return render(request, 'SNS/search.html')
+    
+    if request.method == 'GET':
+        
+        return render(request, 'SNS/search.html')
 
 
 def song(request, track_id):
@@ -135,8 +138,19 @@ def artist(request, artist_id):
         
         response = spotify_data.search_artist_id(artist_id)
         
-        # return JsonResponse({ 'response': response })
         return render(request, 'SNS/artist.html', {
+            'response': response,
+        })
+
+
+def playlist(request, playlist_id):
+    
+    if request.method == 'GET':
+        
+        response = spotify_data.search_public_playlist_id(playlist_id)
+        
+        # return JsonResponse({ 'response': response })
+        return render(request, 'SNS/playlist.html', {
             'response': response,
         })
 
@@ -338,7 +352,7 @@ def search_song(request):
         
         if "query" in request.GET:
         
-            response = spotify_data.search_query([SPOTIFY_SEARCH_TYPE_TRACK], request.GET['query'], 20, request.GET['offset'])
+            response = spotify_data.search_query(SPOTIFY_SEARCH_TYPE_TRACK, request.GET['query'], 20, request.GET['offset'])
         
             return JsonResponse({ 'response': response })
 
@@ -349,7 +363,7 @@ def search_any(request):
         
         if "query" in request.GET:
         
-            response = spotify_data.search_query([SPOTIFY_SEARCH_TYPE_TRACK, SPOTIFY_SEARCH_TYPE_ALBUM, SPOTIFY_SEARCH_TYPE_ARTIST, SPOTIFY_SEARCH_TYPE_PLAYLIST], request.GET['query'], 20, request.GET['offset'])
+            response = spotify_data.search_query(SPOTIFY_SEARCH_TYPE_ALL, request.GET['query'], 20, request.GET['offset'])
         
             return JsonResponse({ 'response': response })
 
