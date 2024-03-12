@@ -257,11 +257,16 @@ def pick_artist_data_from_json(artist_res_data, album_data, track_data):
         'artist': {
             'id': artist_res_data['id'],
             'name': artist_res_data['name'],
-            'image': artist_res_data['images'][0]['url'],
         },
         'albums': response_album_data,
         'songs': response_song_data,
     }
+    
+    if 'images' in artist_res_data and len(artist_res_data['images']) > 0:
+        response_data['artist']['image'] = artist_res_data['images'][0]['url']
+    
+    else:
+        response_data['artist']['image'] = DEFAULT_ARTIST_IMAGE
     
     return response_data
 
@@ -366,8 +371,13 @@ def pick_any_data_from_json(search_response):
                 artist_data = {
                     'id': item['id'],
                     'name': item['name'],
-                    'image': item['images'][0]['url'],
                 }
+                
+                if 'images' in item and len(item['images']) > 0:
+                    artist_data['image'] = item['images'][0]['url']
+
+                else:
+                    artist_data['image'] = DEFAULT_ARTIST_IMAGE
             
             if data_type == 'artists':
                 

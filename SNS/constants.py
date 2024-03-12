@@ -36,6 +36,8 @@ SPOTIFY_RECENT_PLAY_URL = SPOTIFY_API_BASE_URL + 'me/player/recently-played'
 
 SPOTIFY_SEARCH_TYPE = ['albums', 'artists', 'playlists', 'tracks']
 
+DEFAULT_ARTIST_IMAGE = 'https://music-sns.s3.ap-northeast-1.amazonaws.com/default-artist.png'
+
 
 
 # Response Type
