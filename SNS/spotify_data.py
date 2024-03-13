@@ -18,7 +18,7 @@ def get_user_profile(access_token, request, headers = None):
     
     user = ProfileData.objects.get(user_id=request.user.id)
     
-    if user.spotify_id == None:
+    if user.spotify_id == None or user.spotify_id == "None":
         
         user.spotify_id = response['id']
         
@@ -33,7 +33,7 @@ def get_current_play(access_token, request):
     
     headers = create_header(access_token, request)
     
-    get_user_profile(access_token, request, headers)
+    response = get_user_profile(access_token, request, headers)
     
     if response['product'] == 'premium':
         
