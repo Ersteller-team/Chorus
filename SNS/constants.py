@@ -1,4 +1,4 @@
-HOST_URL = 'http://localhost:8000'
+HOST_URL = 'https://music.ersteller.teraddition.com'
 
 
 # Spotify API Constants
