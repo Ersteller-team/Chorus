@@ -6,11 +6,13 @@ from .spotify_token import *
 # Need User Data
 
 
-# ------------ Get Now Play Data ---------------
+# ------------ Get User Profile ---------------
 
-def get_current_play(access_token, request):
+def get_user_profile(access_token, request, headers = None):
     
-    headers = create_header(access_token, request)
+    if headers == None:
+        
+        headers = create_header(access_token, request)
     
     response = requests.get(SPOTIFY_USER_PROFILE_URL, headers=headers).json()
     
@@ -21,6 +23,17 @@ def get_current_play(access_token, request):
         user.spotify_id = response['id']
         
         user.save()
+    
+    return response
+
+
+# ------------ Get Now Play Data ---------------
+
+def get_current_play(access_token, request):
+    
+    headers = create_header(access_token, request)
+    
+    get_user_profile(access_token, request, headers)
     
     if response['product'] == 'premium':
         

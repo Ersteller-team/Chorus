@@ -17,6 +17,10 @@ from .forms import AddProfileForm, ProfileForm
 
 # Create your views here.
 
+def index(request):
+    
+    return redirect(HOST_URL + '/home/')
+
 def home(request):
     
     if request.method == 'GET':
@@ -335,6 +339,16 @@ def spotify(request):
 
 
 @login_required
+def spotify_auth_manually(request):
+    
+    auth_url = spotify_data.get_authenticate_url()
+    
+    return render(request, 'SNS/authenticate.html', {
+        'auth_url': auth_url,
+    })
+
+
+@login_required
 def spotify_callback(request):
     
     if request.method == 'GET':
@@ -344,6 +358,8 @@ def spotify_callback(request):
             authenticate_code = request.GET['code']
             
             access_token, refresh_token = spotify_data.get_access_token_authentication(authenticate_code)
+            
+            spotify_data.get_user_profile(access_token, request)
             
             user = ProfileData.objects.get(user_id=request.user.id)
             user.spotify_access_token = access_token

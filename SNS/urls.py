@@ -6,6 +6,7 @@ app_name = 'SNS'
 urlpatterns = [
     
     # Main
+    path('', views.index, name='index'),
     path('home/', views.home, name='home'), 
     path('search/', views.search, name='search'),
     path('search/song/<slug:track_id>', views.song, name='song'),
@@ -16,6 +17,7 @@ urlpatterns = [
     path('post/good', views.postGood, name='postgood'),
     path('post/delete', views.postDelete, name='postdelete'),
     path('spotify', views.spotify, name='spotify'),
+    path('spotify/auth/manually', views.spotify_auth_manually, name='spotify_auth_manually'),
     path('spotify/callback', views.spotify_callback, name='spotify_callback'),
     path('library/song', views.library_song, name='library_song'),
     path('library/artist', views.library_artist, name='library_artist'),
