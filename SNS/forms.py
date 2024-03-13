@@ -25,7 +25,7 @@ class AddProfileForm(forms.ModelForm):
     
     class Meta():
         model = ProfileData
-        fields = ['icon', 'description', 'spotify_access_token', 'spotify_refresh_token']
+        fields = ['icon', 'description', 'spotify_id', 'spotify_access_token', 'spotify_refresh_token']
         labels = {
             'icon': 'Icon',
             'description': 'Description',

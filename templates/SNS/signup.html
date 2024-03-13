@@ -32,12 +32,13 @@
                 </div>
                 <div class="form-content">
                     <h2>Icon</h2>
-                    <input type="file" name="icon">
+                    <input type="file" name="icon" accept="image/*">
                 </div>
                 <input type="hidden" name="icon" maxlength="200" id="id_icon" value="https://teraddition.com">
                 <textarea name="description" cols="40" rows="10" maxlength="300" id="id_description" value="None" style="display: none;">None</textarea>
                 <input type="hidden" name="spotify_access_token" maxlength="100" id="id_spotify_access_token" value="None">
                 <input type="hidden" name="spotify_refresh_token" maxlength="100" id="id_spotify_refresh_token" value="None">
+                <input type="hidden" name="spotify_id" maxlength="100" id="id_spotify_id" value="None">
                 <div class="signup-parent">
                     <p>アカウントをお持ちの場合 <u><a href="{% url 'SNS:signin' %}">Sign In</a></u></p>
                     <input type="submit" value="Sign Up" id="signup" class="new-post-submit" disabled>

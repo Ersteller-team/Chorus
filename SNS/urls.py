@@ -6,7 +6,7 @@ app_name = 'SNS'
 urlpatterns = [
     
     # Main
-    path('api/', views.api_test, name='api_test'),
+    path('', views.index, name='index'),
     path('home/', views.home, name='home'), 
     path('search/', views.search, name='search'),
     path('search/song/<slug:track_id>', views.song, name='song'),
@@ -17,7 +17,12 @@ urlpatterns = [
     path('post/good', views.postGood, name='postgood'),
     path('post/delete', views.postDelete, name='postdelete'),
     path('spotify', views.spotify, name='spotify'),
+    path('spotify/auth/manually', views.spotify_auth_manually, name='spotify_auth_manually'),
     path('spotify/callback', views.spotify_callback, name='spotify_callback'),
+    path('library/song', views.library_song, name='library_song'),
+    path('library/artist', views.library_artist, name='library_artist'),
+    path('library/album', views.library_album, name='library_album'),
+    path('library/playlist', views.library_playlist, name='library_playlist'),
     path('profile/<slug:username>', views.profile, name='profile'),
     path('profile/<slug:username>/edit', views.profile_edit, name='profile_edit'),
     path('profile/<slug:username>/song/follow', views.user_song, name='song_follow'),
@@ -28,6 +33,7 @@ urlpatterns = [
     path('check/username/', views.username_check, name='username_check'),
     path('search/song/', views.search_song, name='search_song'),
     path('search/any/', views.search_any, name='search_any'),
+    path('follow/all/', views.follow_all, name='follow_all'),
     
     # Account
     path('signup/', views.AccountRegistration.as_view(), name='signup'), 

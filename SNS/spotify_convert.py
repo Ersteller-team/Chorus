@@ -112,7 +112,7 @@ def pick_album_data_from_json(album_data, track_data):
     
     response_data = {}
     response_song_data = []
-        
+    
     for item in track_data['items']:
         
         song_data = {
@@ -175,7 +175,7 @@ def pick_album_data_from_json(album_data, track_data):
 
 # ------------ Pick Artist Data from JSON ---------------
 
-def pick_artist_data_from_json(artist_res_data, album_data, track_data):
+def pick_artist_data_from_json(album_data, artist_res_data, track_data):
     
     response_data = {}
     response_album_data = []
@@ -206,7 +206,6 @@ def pick_artist_data_from_json(artist_res_data, album_data, track_data):
         }
         
         response_album_data.append(album)
-    
     
     for item in track_data['tracks']:
         
@@ -246,6 +245,7 @@ def pick_artist_data_from_json(artist_res_data, album_data, track_data):
     offset = 0
     
     artist_list = []
+    
     
     response_data = { 
         'status': {
@@ -331,6 +331,7 @@ def pick_playlist_data_from_json(playlist_response, tracks_response):
             'id': playlist_response['id'],
             'name': playlist_response['name'],
             'image': playlist_response['images'][0]['url'],
+            'owner': playlist_response['owner']['display_name'],
         },
         'songs': response_song_data,
     }
@@ -377,7 +378,7 @@ def pick_any_data_from_json(search_response):
                 
                 if 'images' in item and len(item['images']) > 0:
                     artist_data['image'] = item['images'][0]['url']
-
+                
                 else:
                     artist_data['image'] = DEFAULT_ARTIST_IMAGE
             
@@ -452,9 +453,152 @@ def pick_any_data_from_json(search_response):
 
 def pick_current_play_data_from_json(response):
     
-    response_data = {
-        'premium_user': True,
+    item = response['item']
+    
+    song_data = {
+        'id': item['id'],
+        'name': item['name'],
+        'preview': item['preview_url'],
+    }
+    
+    artist_list = []
+    
+    for artist in item['artists']:
         
-    } 
+        artist_data = {
+            'id': artist['id'],
+            'name': artist['name'],
+        }
+        
+        artist_list.append(artist_data)
+    
+    album_data = {
+        'id': item['album']['id'],
+        'name': item['album']['name'],
+        'image': item['album']['images'][0]['url'],
+    }
+    
+    response_data = {
+        'status': {
+            'premium_user': True,
+            'success': True,
+            'playing': response['is_playing'],
+            'repeat': response['repeat_state'],
+            'shuffle': response['shuffle_state'],
+        },
+        'data': {
+            'song': song_data,
+            'artist': artist_list,
+            'album': album_data,
+        },
+        'controls': {
+            'start': SPOTIFY_CONTROL_START_URL,
+            'pause': SPOTIFY_CONTROL_PAUSE_URL,
+            'next': SPOTIFY_CONTROL_NEXT_URL,
+            'previous': SPOTIFY_CONTROL_PREVIOUS_URL,
+            'repeat': SPOTIFY_CONTROL_REPEAT_URL,
+            'shuffle': SPOTIFY_CONTROL_SHUFFLE_URL,
+        },
+    }
     
     return response_data
+
+
+# ------------ Pick Artist Data from JSON for Library ---------------
+
+def pick_album_data_from_json_for_library(album_data):
+    
+    response_album_data = []
+    
+    for item in album_data['items']:
+        
+        album_data = {
+            'id': item['album']['id'],
+            'name': item['album']['name'],
+            'image': item['album']['images'][0]['url'],
+        }
+        
+        artist_list = []
+        
+        for artist in item['album']['artists']:
+            
+            artist_data = {
+                'id': artist['id'],
+                'name': artist['name'],
+            }
+            
+            artist_list.append(artist_data)
+        
+        album = {
+            'album': album_data,
+            'artist': artist_list,
+        }
+        
+        response_album_data.append(album)
+    
+    response_data = {
+        'albums': response_album_data,
+    }
+    
+    return response_data
+
+
+# ------------ Pick Artist Data from JSON for Library ---------------
+
+def pick_artist_data_from_json_for_library(artist_data):
+    
+    response_album_data = []
+    
+    for item in artist_data['artists']['items']:
+        
+        artist_list = {
+            'id': item['id'],
+            'name': item['name'],
+            'image': item['images'][0]['url'],
+        }
+        
+        album = {
+            'artist': artist_list,
+        }
+        
+        response_album_data.append(album)
+    
+    response_data = {
+        'artists': response_album_data,
+    }
+    
+    return response_data
+
+
+# ------------ Pick My Library Data from JSON for Library ---------------
+
+def pick_playlist_data_from_json_for_library(playlists_response, spotify_id):
+    
+    response_playlists_data = []
+    
+    for item in playlists_response['items']:
+        
+        playlist_data = {
+            'id': item['id'],
+            'name': item['name'],
+            'owner': {
+                'name': item['owner']['display_name'],
+                'id': item['owner']['id'],
+            },
+            'public': spotify_id != item['owner']['id'] or item['public'],
+        }
+        
+        if len(item['images']) > 0:
+            playlist_data['image'] = item['images'][0]['url']
+        
+        else:
+            playlist_data['image'] = DEFAULT_PLAYLIST_IMAGE
+        
+        response_playlists_data.append(playlist_data)
+    
+    response_data = {
+        'playlist': response_playlists_data,
+    }
+    
+    return response_data
+
