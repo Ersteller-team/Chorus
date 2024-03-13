@@ -28,7 +28,7 @@ SPOTIFY_SEARCH_ALBUM_ID_URL = SPOTIFY_API_BASE_URL + 'albums/'
 
 SPOTIFY_SEARCH_ARTIST_ID_URL = SPOTIFY_API_BASE_URL + 'artists/'
 
-SPOTIFY_SEARCH_PUBLIC_PLAYLIST_ID_URL = SPOTIFY_API_BASE_URL + 'playlists/'
+SPOTIFY_SEARCH_PLAYLIST_ID_URL = SPOTIFY_API_BASE_URL + 'playlists/'
 
 SPOTIFY_USER_PROFILE_URL = SPOTIFY_API_BASE_URL + 'me'
 
@@ -59,6 +59,8 @@ SPOTIFY_CONTROL_SHUFFLE_URL = SPOTIFY_CURRENT_PLAY_URL + '/shuffle'
 SPOTIFY_SEARCH_TYPE = ['albums', 'artists', 'playlists', 'tracks']
 
 DEFAULT_ARTIST_IMAGE = 'https://music-sns.s3.ap-northeast-1.amazonaws.com/default-artist.png'
+
+DEFAULT_PLAYLIST_IMAGE = 'https://music-sns.s3.ap-northeast-1.amazonaws.com/default-playlist.png'
 
 
 

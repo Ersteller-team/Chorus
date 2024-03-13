@@ -7,12 +7,17 @@
         <div class="song">
             <span class="song-details">
                 <img src="{{ response.playlist.image }}" alt="{{ response.playlist.name }}" class="song-coverart">
-                <h1 class="song-detail song-title" id="artist-name">{{ response.playlist.name }}</h1>
+                <h1 class="song-detail song-title" id="album-name">{{ response.playlist.name }}</h1>
+                <p class="song-detail song-artist-album song-artist-album-follower" id="album-artist">{{ response.playlist.owner }}</p>
             </span>
             <iframe class="song-preview" src="https://open.spotify.com/embed/playlist/{{ response.playlist.id }}?utm_source=generator" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
         </div>
         <div class="center">
             <h2 id="record-song">追加された楽曲 ({{ response.songs | length }})</h2>
+            {% csrf_token %}
+            <button id="follow-all" class="song-type-select" type="button" onclick="follow_all()" style="margin-top: 10px;">プレイリスト内の楽曲を全てフォロー</button>
+            <p style="margin: 4px;0px;font-size: 10px;">この操作には時間がかかる場合があります</p>
+            <script src="{% static 'SNS/follow-all.js' %}"></script>
             <table class="margin-auto">
                 {% for song in response.songs %}
                     <tr>

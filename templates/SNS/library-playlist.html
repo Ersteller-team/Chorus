@@ -1,0 +1,18 @@
+{% extends "SNS/library.html" %}
+{% load static %}
+{% load humanize %}
+{% block library-content %}
+    <table class="margin-auto" id="search-result-table-tracks">
+        {% for playlist in response.playlist %}
+            <tr>
+                <td class="song-table-img"><img src="{{ playlist.image }}" id="img" class="new-post-song-img" alt="{{ playlist.name }}"></td>
+                <td class="song-table-title">
+                    <div class="search-song-title-artist new-post-song-title-artist">
+                        <a href="{% url "SNS:playlist" playlist.id %}"><p class="new-post-song-title dont-new-line">{{ playlist.name }}</p></a>
+                        <a href="{% url "SNS:playlist" playlist.id %}"><p class="new-post-song-artist dont-new-line">{{ playlist.owner.name }}</p></a>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

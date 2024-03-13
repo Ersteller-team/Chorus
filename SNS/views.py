@@ -6,7 +6,7 @@ from django.middleware.csrf import get_token
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.db.models import Q
-import boto3, random, string
+import boto3, random, string, json
 from io import BytesIO
 from PIL import Image
 from . import spotify_data
@@ -156,7 +156,9 @@ def playlist(request, playlist_id):
     
     if request.method == 'GET':
         
-        response = spotify_data.search_public_playlist_id(playlist_id)
+        user = ProfileData.objects.get(user_id=request.user.id)
+        
+        response = spotify_data.search_playlist_id(playlist_id, user.spotify_access_token, request)
         
         return render(request, 'SNS/playlist.html', {
             'response': response,
@@ -323,17 +325,12 @@ def spotify(request):
     else:
         
         now_play = spotify_data.get_current_play(user.spotify_access_token, request)
-        # return JsonResponse({ 'response': now_play })
         
         recent_play = spotify_data.get_recent_play(user.spotify_access_token, request, 50)
-        
-        library = spotify_data.get_my_library(user.spotify_access_token, request)
-        # return JsonResponse({ 'response': library })
         
         return render(request, 'SNS/spotify.html', {
             'recent_play': recent_play,
             'now_play': now_play,
-            'response': library,
         })
 
 
@@ -354,6 +351,66 @@ def spotify_callback(request):
             user.save()
     
     return redirect(HOST_URL + '/spotify')
+
+
+@login_required
+def library_song(request):
+    
+    user = ProfileData.objects.get(user_id=request.user.id)
+    
+    if request.method == 'GET':
+        
+        response = spotify_data.get_saved_track(user.spotify_access_token, request)
+        
+        return render(request, 'SNS/library-song.html', {
+            'response': response,
+            'method': 'song',
+        })
+
+
+@login_required
+def library_artist(request):
+    
+    user = ProfileData.objects.get(user_id=request.user.id)
+    
+    if request.method == 'GET':
+        
+        response = spotify_data.get_saved_artist(user.spotify_access_token, request)
+        
+        return render(request, 'SNS/library-artist.html', {
+            'response': response,
+            'method': 'artist',
+        })
+
+
+@login_required
+def library_album(request):
+    
+    user = ProfileData.objects.get(user_id=request.user.id)
+    
+    if request.method == 'GET':
+        
+        response = spotify_data.get_saved_album(user.spotify_access_token, request)
+        
+        return render(request, 'SNS/library-album.html', {
+            'response': response,
+            'method': 'album',
+        })
+
+
+@login_required
+def library_playlist(request):
+    
+    user = ProfileData.objects.get(user_id=request.user.id)
+    
+    if request.method == 'GET':
+        
+        response = spotify_data.get_saved_playlist(user.spotify_access_token, request)
+        
+        return render(request, 'SNS/library-playlist.html', {
+            'response': response,
+            'method': 'playlist',
+        })
 
 
 def profile(request, username):
@@ -436,7 +493,7 @@ def user_song(request, username):
     
     follow = UserFollowData.objects.filter(user_id=request.user.id, opponent_id=user_obj.id).exists()
     
-    response = MusicFollowData.objects.filter(user_id=user_obj.id)
+    response = MusicFollowData.objects.filter(user_id=user_obj.id).order_by('-id')
     
     return render(request, 'SNS/profile-song.html', {
             'user_obj': user_obj,
@@ -465,7 +522,7 @@ def user_follow(request, username):
     
     profile = ProfileData.objects.get(user_id=user_obj.id)
     
-    no = UserFollowData.objects.filter(user_id=user_obj.id)
+    no = UserFollowData.objects.filter(user_id=user_obj.id).order_by('-id')
     
     response = []
     for i in no:
@@ -506,7 +563,7 @@ def user_follower(request, username):
     
     profile = ProfileData.objects.get(user_id=user_obj.id)
     
-    no = UserFollowData.objects.filter(opponent_id=user_obj.id)
+    no = UserFollowData.objects.filter(opponent_id=user_obj.id).order_by('-id')
     
     response = []
     for i in no:
@@ -568,6 +625,147 @@ def username_check(request):
         
         else:
             return JsonResponse({ 'exists': True })
+
+
+def follow_all(request):
+    
+    if request.method == 'POST':
+        
+        data = json.loads(request.body)
+        
+        page = data["page"].split('/')
+        
+        id = page[-1].split('?')[0]
+        
+        if page[-2] == 'album':
+            
+            response = spotify_data.search_album_id(id)
+            
+            for song in response['songs']:
+                
+                if MusicFollowData.objects.filter(user_id=request.user.id, music_id=song['song']['id']).exists():
+                    
+                    continue
+                
+                artist_name = ""
+                
+                for i, artist in enumerate(song['artist']):
+                    
+                    if i == len(song['artist']) - 1:
+                        
+                        artist_name += artist['name']
+                    
+                    else:
+                        
+                        artist_name += str(artist['name']) + ', '
+                
+                MusicFollowData.objects.create(
+                    user_id = request.user.id,
+                    music_id = song['song']['id'],
+                    song_name = song['song']['name'],
+                    artist_name = artist_name,
+                    album_name = response['album']['name'],
+                    image = response['album']['image'],
+                )
+        
+        elif page[-2] == 'artist':
+            
+            response = spotify_data.search_artist_id(id)
+            
+            for song in response['songs']:
+                
+                if MusicFollowData.objects.filter(user_id=request.user.id, music_id=song['song']['id']).exists():
+                    
+                    continue
+                
+                artist_name = ""
+                
+                for i, artist in enumerate(song['artist']):
+                    
+                    if i == len(song['artist']) - 1:
+                        
+                        artist_name += artist['name']
+                    
+                    else:
+                        
+                        artist_name += artist['name'] + ', '
+                
+                MusicFollowData.objects.create(
+                    user_id = request.user.id,
+                    music_id = song['song']['id'],
+                    song_name = song['song']['name'],
+                    artist_name = artist_name,
+                    album_name = song['album']['name'],
+                    image = song['album']['image'],
+                )
+        
+        elif page[-2] == 'playlist':
+            
+            user = ProfileData.objects.get(user_id=request.user.id)
+            
+            response = spotify_data.search_playlist_id(id, user.spotify_access_token, request)
+            
+            for song in response['songs']:
+                
+                if MusicFollowData.objects.filter(user_id=request.user.id, music_id=song['song']['id']).exists():
+                    
+                    continue
+                
+                artist_name = ""
+                
+                for i, artist in enumerate(song['artist']):
+                    
+                    if i == len(song['artist']) - 1:
+                        
+                        artist_name += artist['name']
+                    
+                    else:
+                        
+                        artist_name += artist['name'] + ', '
+                
+                MusicFollowData.objects.create(
+                    user_id = request.user.id,
+                    music_id = song['song']['id'],
+                    song_name = song['song']['name'],
+                    artist_name = artist_name,
+                    album_name = song['album']['name'],
+                    image = song['album']['image'],
+                )
+        
+        elif page[-2] == 'library':
+            
+            user = ProfileData.objects.get(user_id=request.user.id)
+            
+            response = spotify_data.get_saved_track(user.spotify_access_token, request)
+            
+            for song in response['data']:
+                
+                if MusicFollowData.objects.filter(user_id=request.user.id, music_id=song['song']['id']).exists():
+                    
+                    continue
+                
+                artist_name = ""
+                
+                for i, artist in enumerate(song['artist']):
+                    
+                    if i == len(song['artist']) - 1:
+                        
+                        artist_name += artist['name']
+                    
+                    else:
+                        
+                        artist_name += artist['name'] + ', '
+                
+                MusicFollowData.objects.create(
+                    user_id = request.user.id,
+                    music_id = song['song']['id'],
+                    song_name = song['song']['name'],
+                    artist_name = artist_name,
+                    album_name = song['album']['name'],
+                    image = song['album']['image'],
+                )
+        
+        return JsonResponse({ 'success': True })
 
 
 # Account

@@ -1,0 +1,19 @@
+{% extends "SNS/layout.html" %}
+{% load static %}
+{% load humanize %}
+{% block title %}My {{ method | capfirst }} Library{{ block.super }}{% endblock %}
+{% block main %}
+    <div class="main">
+        <div class="center">
+            <h2 id="record-song">マイライブラリ</h2>
+            <div class="button-bar">
+                <button id="search-button-tracks" class="song-type-select {% if method == 'song' %}button-select{% endif %}" type="button" onclick="location.href = '{% url "SNS:library_song" %}';">Tracks</button>
+                <button id="search-button-artists" class="song-type-select {% if method == 'artist' %}button-select{% endif %}" type="button" onclick="location.href = '{% url "SNS:library_artist" %}';">Artists</button>
+                <button id="search-button-albums" class="song-type-select {% if method == 'album' %}button-select{% endif %}" type="button" onclick="location.href = '{% url "SNS:library_album" %}';">Albums</button>
+                <button id="search-button-playlists" class="song-type-select {% if method == 'playlist' %}button-select{% endif %}" type="button" onclick="location.href = '{% url "SNS:library_playlist" %}';">Playlists</button>
+            </div>
+            {% block library-content %}{% endblock %}
+        </div>
+    </div>
+    <script src="{% static 'SNS/spotify.js' %}"></script>
+{% endblock %}

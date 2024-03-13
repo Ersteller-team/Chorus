@@ -13,6 +13,10 @@
         </div>
         <div class="center">
             <h2 id="record-song">再生ランキング</h2>
+            {% csrf_token %}
+            <button id="follow-all" class="song-type-select" type="button" onclick="follow_all()" style="margin-top: 10px;">再生ランキングの楽曲を全てフォロー</button>
+            <p style="margin: 4px;0px;font-size: 10px;">この操作には時間がかかる場合があります</p>
+            <script src="{% static 'SNS/follow-all.js' %}"></script>
             <table class="margin-auto">
                 {% for song in response.songs %}
                     <tr>

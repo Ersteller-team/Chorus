@@ -1,0 +1,18 @@
+{% extends "SNS/library.html" %}
+{% load static %}
+{% load humanize %}
+{% block library-content %}
+    <table class="margin-auto" id="search-result-table-tracks">
+        {% for album in response.albums %}
+            <tr>
+                <td class="song-table-img"><img src="{{ album.album.image }}" id="img" class="new-post-song-img" alt="{{ album.album.name }}"></td>
+                <td class="song-table-title">
+                    <div class="search-song-title-artist new-post-song-title-artist">
+                        <a href="{% url "SNS:album" album.album.id %}"><p class="new-post-song-title dont-new-line">{{ album.album.name }}</p></a>
+                        <a href="{% url "SNS:album" album.album.id %}"><p class="new-post-song-artist dont-new-line">{% for artist in album.artist %}{% if forloop.last %}{{ artist.name }}{% else %}{{ artist.name }}, {% endif %}{% endfor %}</p></a>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

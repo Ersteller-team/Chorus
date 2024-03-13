@@ -331,6 +331,7 @@ def pick_playlist_data_from_json(playlist_response, tracks_response):
             'id': playlist_response['id'],
             'name': playlist_response['name'],
             'image': playlist_response['images'][0]['url'],
+            'owner': playlist_response['owner']['display_name'],
         },
         'songs': response_song_data,
     }
@@ -452,8 +453,6 @@ def pick_any_data_from_json(search_response):
 
 def pick_current_play_data_from_json(response):
     
-    response_data = {}
-    
     item = response['item']
     
     song_data = {
@@ -509,7 +508,6 @@ def pick_current_play_data_from_json(response):
 
 def pick_album_data_from_json_for_library(album_data):
     
-    response_data = {}
     response_album_data = []
     
     for item in album_data['items']:
@@ -549,7 +547,6 @@ def pick_album_data_from_json_for_library(album_data):
 
 def pick_artist_data_from_json_for_library(artist_data):
     
-    response_data = {}
     response_album_data = []
     
     for item in artist_data['artists']['items']:
@@ -575,9 +572,8 @@ def pick_artist_data_from_json_for_library(artist_data):
 
 # ------------ Pick My Library Data from JSON for Library ---------------
 
-def pick_playlist_data_from_json_for_my_library(playlists_response):
+def pick_playlist_data_from_json_for_library(playlists_response, spotify_id):
     
-    response_data = {}
     response_playlists_data = []
     
     for item in playlists_response['items']:
@@ -585,36 +581,23 @@ def pick_playlist_data_from_json_for_my_library(playlists_response):
         playlist_data = {
             'id': item['id'],
             'name': item['name'],
+            'owner': {
+                'name': item['owner']['display_name'],
+                'id': item['owner']['id'],
+            },
+            'public': spotify_id != item['owner']['id'] or item['public'],
         }
         
         if len(item['images']) > 0:
             playlist_data['image'] = item['images'][0]['url']
         
+        else:
+            playlist_data['image'] = DEFAULT_PLAYLIST_IMAGE
+        
         response_playlists_data.append(playlist_data)
     
     response_data = {
         'playlist': response_playlists_data,
-    }
-    
-    return response_data
-
-
-# ------------ Pick My Library Data from JSON ---------------
-
-def pick_my_library_from_json(tracks_response, albums_response, artists_response, playlists_response):
-    
-    response_data = {}
-    
-    response_data = {
-        'status': {
-            'success': True,
-        },
-        'data': {
-            'tracks': tracks_response['data'],
-            'albums': albums_response['albums'],
-            'artists': artists_response['artists'],
-            'playlists': playlists_response['playlist'],
-        },
     }
     
     return response_data
