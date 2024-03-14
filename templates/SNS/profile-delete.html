@@ -1,0 +1,30 @@
+{% extends "SNS/layout.html" %}
+{% load static %}
+{% load humanize %}
+{% block title %}Delete Account{{ block.super }}{% endblock %}
+{% block main %}
+<div class="main">
+    <h1 style="color: red;">Delete Account</h1>
+    <p>アカウントを削除します。</p>
+    <p>この操作は取り消せません。</p>
+    <h2>削除されるデータ</h2>
+    <ul>
+        <li><p>{{ user.username }}のユーザー情報</p></li>
+        <li><p>{{ posts | intcomma }} 件の投稿・コメント</p></li>
+        <li><p>{{ song_follow | intcomma }} 曲のフォロー</p></li>
+        <li><p>{{ user_follow | intcomma }} 人のフォロー</p></li>
+        <li><p>{{ user_follower | intcomma }} 人のフォロワー</p></li>
+        <li><p>{{ like | intcomma }} 件のいいね</p></li>
+        {% if spotify %}
+            <li><p>Spotifyとの接続</p></li>
+        {% endif %}
+    </ul>
+    <p>現在、サインインしているアカウントは{{ user.username }}です。</p>
+    <p>この操作は取り消せません。</p>
+    <form action="" method="post">
+        {% csrf_token %}
+        <input class="new-post-submit" style="color: red;" type="submit" value="削除">
+        <button class="new-post-submit" type="button" onclick="location.href = '{% url "SNS:profile_edit" request.user.username %}';">キャンセル</button>
+    </form>
+</div>
+{% endblock %}

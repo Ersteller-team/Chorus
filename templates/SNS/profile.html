@@ -9,6 +9,7 @@
                 <h1 class="song-detail song-title">{{ user_obj.username }}</h1>
             </span>
             {% if request.user.username != user_obj.username %}
+                {% if user.is_authenticated %}
                 <form action="{% url "SNS:profile" user_obj.id %}" method="post">
                     {% csrf_token %}
                     {% if follow %}
@@ -21,6 +22,9 @@
                         <input class="song-detail song-follow" type="submit" value="ユーザーをフォロー">
                     {% endif %}
                 </form>
+                {% else %}
+                <button id="search-button-tracks" class="song-detail song-follow" type="button" onclick="location.href = '{% url "SNS:signin" %}?next=/profile/{{ user_obj.username }}';">フォローにはログインが必要です</button>
+                {% endif %}
             {% else %}
                 <button class="song-detail song-follow" type="button" onclick="location.href = '{% url "SNS:profile_edit" request.user.username %}';">プロフィールを編集</button>
             {% endif %}

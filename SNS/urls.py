@@ -25,6 +25,7 @@ urlpatterns = [
     path('library/playlist', views.library_playlist, name='library_playlist'),
     path('profile/<slug:username>', views.profile, name='profile'),
     path('profile/<slug:username>/edit', views.profile_edit, name='profile_edit'),
+    path('profile/<slug:username>/delete', views.profile_delete, name='profile_delete'),
     path('profile/<slug:username>/song/follow', views.user_song, name='song_follow'),
     path('profile/<slug:username>/user/follow', views.user_follow, name='user_follow'),
     path('profile/<slug:username>/user/follower', views.user_follower, name='user_follower'),

@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, QueryDict
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic import TemplateView
 from django.middleware.csrf import get_token
@@ -374,6 +374,14 @@ def library_song(request):
     
     user = ProfileData.objects.get(user_id=request.user.id)
     
+    if user.spotify_refresh_token == None:
+    
+        auth_url = spotify_data.get_authenticate_url()
+        
+        return render(request, 'SNS/authenticate.html', {
+            'auth_url': auth_url,
+        })
+    
     if request.method == 'GET':
         
         response = spotify_data.get_saved_track(user.spotify_access_token, request)
@@ -388,6 +396,14 @@ def library_song(request):
 def library_artist(request):
     
     user = ProfileData.objects.get(user_id=request.user.id)
+    
+    if user.spotify_refresh_token == None:
+    
+        auth_url = spotify_data.get_authenticate_url()
+        
+        return render(request, 'SNS/authenticate.html', {
+            'auth_url': auth_url,
+        })
     
     if request.method == 'GET':
         
@@ -404,6 +420,14 @@ def library_album(request):
     
     user = ProfileData.objects.get(user_id=request.user.id)
     
+    if user.spotify_refresh_token == None:
+    
+        auth_url = spotify_data.get_authenticate_url()
+        
+        return render(request, 'SNS/authenticate.html', {
+            'auth_url': auth_url,
+        })
+    
     if request.method == 'GET':
         
         response = spotify_data.get_saved_album(user.spotify_access_token, request)
@@ -418,6 +442,14 @@ def library_album(request):
 def library_playlist(request):
     
     user = ProfileData.objects.get(user_id=request.user.id)
+    
+    if user.spotify_refresh_token == None:
+    
+        auth_url = spotify_data.get_authenticate_url()
+        
+        return render(request, 'SNS/authenticate.html', {
+            'auth_url': auth_url,
+        })
     
     if request.method == 'GET':
         
@@ -657,6 +689,8 @@ def follow_all(request):
             
             response = spotify_data.search_album_id(id)
             
+            response['songs'].reverse()
+            
             for song in response['songs']:
                 
                 if MusicFollowData.objects.filter(user_id=request.user.id, music_id=song['song']['id']).exists():
@@ -687,6 +721,8 @@ def follow_all(request):
         elif page[-2] == 'artist':
             
             response = spotify_data.search_artist_id(id)
+            
+            response['songs'].reverse()
             
             for song in response['songs']:
                 
@@ -721,6 +757,8 @@ def follow_all(request):
             
             response = spotify_data.search_playlist_id(id, user.spotify_access_token, request)
             
+            response['songs'].reverse()
+            
             for song in response['songs']:
                 
                 if MusicFollowData.objects.filter(user_id=request.user.id, music_id=song['song']['id']).exists():
@@ -753,6 +791,8 @@ def follow_all(request):
             user = ProfileData.objects.get(user_id=request.user.id)
             
             response = spotify_data.get_saved_track(user.spotify_access_token, request)
+            
+            response['data'].reverse()
             
             for song in response['data']:
                 
@@ -847,6 +887,55 @@ def profile_edit(request, username):
             return redirect(HOST_URL + '/profile/' + username)
 
 
+def profile_delete(request, username):
+    
+    if request.user.username == username:
+        
+        user = User.objects.get(username=username)
+        prof = ProfileData.objects.get(user_id=user.id)
+        
+        posts = PostData.objects.filter(user_id=user.id)
+        
+        song_follow = MusicFollowData.objects.filter(user_id=user.id)
+        
+        user_follow = UserFollowData.objects.filter(user_id=user.id)
+        
+        user_follower = UserFollowData.objects.filter(opponent_id=user.id)
+        
+        follow = UserFollowData.objects.filter(Q(user_id=user.id) | Q(opponent_id=user.id))
+        
+        like = GoodData.objects.filter(Q(admin_id=user.id) | Q(gooded_id=user.id))
+        
+        spotify = prof.spotify_access_token != None
+        
+        if request.method == 'GET':
+            
+            return render(request, 'SNS/profile-delete.html', {
+                'user_obj': user,
+                'profile': prof,
+                'posts': posts.count(),
+                'song_follow': song_follow.count(),
+                'user_follow': user_follow.count(),
+                'user_follower': user_follower.count(),
+                'like': like.count(),
+                'spotify': spotify,
+            })
+        
+        elif request.method == 'POST':
+            
+            logout(request)
+            
+            posts.delete()
+            song_follow.delete()
+            follow.delete()
+            like.delete()
+            
+            user.delete()
+            prof.delete()
+            
+            return render(request, 'SNS/profile-deleted.html')
+
+
 class  AccountRegistration(TemplateView):
 
     def __init__(self):
@@ -860,7 +949,7 @@ class  AccountRegistration(TemplateView):
         self.params["account_form"] = ProfileForm()
         self.params["add_account_form"] = AddProfileForm()
         self.params["AccountCreate"] = False
-        return render(request,"SNS/signup.html",context=self.params)
+        return render(request,"SNS/signup.html",self.params)
     
     def post(self,request):
         self.params["account_form"] = ProfileForm(data=request.POST)
@@ -883,7 +972,12 @@ class  AccountRegistration(TemplateView):
             self.params["AccountCreate"] = True
         else:
             print(self.params["account_form"].errors)
-        return redirect(HOST_URL + '/signin/')
+        next = request.GET.get('next', None)
+        
+        if next != None:
+            return redirect(HOST_URL + '/signin/?next=' + next)
+        else:
+            return redirect(HOST_URL + '/signin/')
 
 
 def Signin(request):
@@ -903,7 +997,16 @@ def Signin(request):
         else:
             return HttpResponse("ログインIDまたはパスワードが間違っています")
     else:
-        return render(request, 'SNS/signin.html')
+        
+        if 'next' in request.GET:
+            next = request.GET['next']
+        
+        else:
+            next = None
+        
+        return render(request, 'SNS/signin.html', {
+            'next': next,
+        })
 
 
 @login_required
