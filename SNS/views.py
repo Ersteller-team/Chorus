@@ -318,24 +318,46 @@ def spotify(request):
     
     user = ProfileData.objects.get(user_id=request.user.id)
     
-    if user.spotify_refresh_token == None:
+    if request.method == 'GET':
+        
+        if user.spotify_refresh_token == None:
+        
+            auth_url = spotify_data.get_authenticate_url()
+            
+            return render(request, 'SNS/authenticate.html', {
+                'auth_url': auth_url,
+            })
+        
+        else:
+            
+            recent_play = spotify_data.get_recent_play(user.spotify_access_token, request, 50)
+            
+            queue = spotify_data.get_queue(user.spotify_access_token, request)
+            
+            if not 'currently_playing' in queue and queue['currently_playing'] == None:
+                
+                return render(request, 'SNS/spotify.html', {
+                    'recent_play': recent_play,
+                    'success': False,
+                })
+            
+            recent_play['data'].reverse()
+            
+            return render(request, 'SNS/spotify.html', {
+                'recent_play': recent_play,
+                'now_play': queue['currently_playing'],
+                'queues': queue['queue'],
+                'success': True,
+                'premium': user.spotify_premium,
+            })
     
-        auth_url = spotify_data.get_authenticate_url()
+    elif request.method == 'POST':
         
-        return render(request, 'SNS/authenticate.html', {
-            'auth_url': auth_url,
-        })
-    
-    else:
+        method = request.POST['control']
         
-        now_play = spotify_data.get_current_play(user.spotify_access_token, request)
+        spotify_data.control(method, user.spotify_access_token, request)
         
-        recent_play = spotify_data.get_recent_play(user.spotify_access_token, request, 50)
-        
-        return render(request, 'SNS/spotify.html', {
-            'recent_play': recent_play,
-            'now_play': now_play,
-        })
+        return redirect(HOST_URL + '/spotify#now-play')
 
 
 @login_required
@@ -988,6 +1010,9 @@ def Signin(request):
         if user:
             if user.is_active:
                 login(request, user)
+                user = ProfileData.objects.get(user_id=user.id)
+                if user.spotify_access_token != None:
+                    spotify_data.get_user_profile(user.spotify_access_token, request)
                 if "next" in request.GET:
                     next = request.GET["next"]
                     return redirect(HOST_URL + next)

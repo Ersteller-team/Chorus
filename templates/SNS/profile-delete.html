@@ -3,7 +3,7 @@
 {% load humanize %}
 {% block title %}Delete Account{{ block.super }}{% endblock %}
 {% block main %}
-<div class="main">
+<div class="main" style="padding:2.5%;width:95%">
     <h1 style="color: red;">Delete Account</h1>
     <p>アカウントを削除します。</p>
     <p>この操作は取り消せません。</p>
@@ -19,7 +19,7 @@
             <li><p>Spotifyとの接続</p></li>
         {% endif %}
     </ul>
-    <p>現在、サインインしているアカウントは{{ user.username }}です。</p>
+    <p class="break-point"><span>現在、サインインしているアカウントは</span><span>{{ user.username }}です。</span></p>
     <p>この操作は取り消せません。</p>
     <form action="" method="post">
         {% csrf_token %}

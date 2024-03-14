@@ -6,6 +6,7 @@ class ProfileData(models.Model):
     icon = models.URLField()
     description = models.TextField(max_length=300)
     spotify_id = models.CharField(max_length=100, null=True)
+    spotify_premium = models.BooleanField(default=False)
     spotify_access_token = models.CharField(max_length=100, null=True)
     spotify_refresh_token = models.CharField(max_length=100, null=True)
     def __str__(self):

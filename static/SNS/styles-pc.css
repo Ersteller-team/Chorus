@@ -144,6 +144,16 @@ button {
 
 @media screen and (min-width: 834px) {
 
+    #spotify-main {
+        margin-bottom: 120px;
+    }
+
+    .control-icon {
+        width: calc(100% - 300px);
+        height: 60px;
+        bottom: 40px;
+    }
+
     #album-name {
         margin-top: 90px;
     }

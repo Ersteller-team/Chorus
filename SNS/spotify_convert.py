@@ -491,14 +491,6 @@ def pick_current_play_data_from_json(response):
             'artist': artist_list,
             'album': album_data,
         },
-        'controls': {
-            'start': SPOTIFY_CONTROL_START_URL,
-            'pause': SPOTIFY_CONTROL_PAUSE_URL,
-            'next': SPOTIFY_CONTROL_NEXT_URL,
-            'previous': SPOTIFY_CONTROL_PREVIOUS_URL,
-            'repeat': SPOTIFY_CONTROL_REPEAT_URL,
-            'shuffle': SPOTIFY_CONTROL_SHUFFLE_URL,
-        },
     }
     
     return response_data

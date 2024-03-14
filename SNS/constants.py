@@ -1,7 +1,9 @@
 HOST_URL = 'https://music.ersteller.teraddition.com'
 
-HOST_URL = 'http://localhost:8000'
-
+try:
+    from .local_settings import *
+except ImportError:
+    pass
 
 # Spotify API Constants
 
@@ -46,6 +48,8 @@ SPOTIFY_CURRENT_PLAY_URL = SPOTIFY_USER_PROFILE_URL + '/player'
 
 SPOTIFY_RECENT_PLAY_URL = SPOTIFY_CURRENT_PLAY_URL + '/recently-played'
 
+SPOTIFY_QUEUE_URL = SPOTIFY_CURRENT_PLAY_URL + '/queue'
+
 SPOTIFY_CONTROL_START_URL = SPOTIFY_CURRENT_PLAY_URL + '/play'
 
 SPOTIFY_CONTROL_PAUSE_URL = SPOTIFY_CURRENT_PLAY_URL + '/pause'
@@ -53,10 +57,6 @@ SPOTIFY_CONTROL_PAUSE_URL = SPOTIFY_CURRENT_PLAY_URL + '/pause'
 SPOTIFY_CONTROL_NEXT_URL = SPOTIFY_CURRENT_PLAY_URL + '/next'
 
 SPOTIFY_CONTROL_PREVIOUS_URL = SPOTIFY_CURRENT_PLAY_URL + '/previous'
-
-SPOTIFY_CONTROL_REPEAT_URL = SPOTIFY_CURRENT_PLAY_URL + '/repeat'
-
-SPOTIFY_CONTROL_SHUFFLE_URL = SPOTIFY_CURRENT_PLAY_URL + '/shuffle'
 
 SPOTIFY_SEARCH_TYPE = ['albums', 'artists', 'playlists', 'tracks']
 

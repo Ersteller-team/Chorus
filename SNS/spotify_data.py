@@ -21,8 +21,10 @@ def get_user_profile(access_token, request, headers = None):
     if user.spotify_id == None or user.spotify_id == "None":
         
         user.spotify_id = response['id']
-        
-        user.save()
+    
+    user.spotify_premium = response['product'] == 'premium'
+    
+    user.save()
     
     return response
 
@@ -209,6 +211,36 @@ def search_playlist_id(playlist_id, access_token, request):
     pick_data = pick_playlist_data_from_json(playlist_response, tracks_response)
     
     return pick_data
+
+
+def get_queue(access_token, request):
+    
+    headers = create_header(access_token, request)
+    
+    response = requests.get(SPOTIFY_QUEUE_URL, headers=headers).json()
+    
+    return response
+
+
+def control(method, access_token, request):
+    
+    headers = create_header(access_token, request)
+    
+    if method == 'play':
+        
+        requests.put(SPOTIFY_CONTROL_START_URL, headers=headers)
+    
+    elif method == 'pause':
+        
+        requests.put(SPOTIFY_CONTROL_PAUSE_URL, headers=headers)
+    
+    elif method == 'next':
+        
+        requests.post(SPOTIFY_CONTROL_NEXT_URL, headers=headers)
+    
+    elif method == 'previous':
+        
+        requests.post(SPOTIFY_CONTROL_PREVIOUS_URL, headers=headers)
 
 
 # No Need User Data
