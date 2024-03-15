@@ -1,10 +1,3 @@
-HOST_URL = 'https://chorus.teraddition.com'
-
-try:
-    from .local_settings import *
-except ImportError:
-    pass
-
 # Spotify API Constants
 
 SPOTIFY_AUTHENTICATE_SCOPE = 'user-read-playback-state user-read-currently-playing streaming playlist-read-private user-top-read user-read-recently-played user-library-read user-read-private user-follow-read'
@@ -15,8 +8,6 @@ SPOTIFY_AUTHENTICATE_SCOPE = 'user-read-playback-state user-read-currently-playi
 SPOTIFY_SEARCH_TYPE_TRACK = 'track'
 
 SPOTIFY_SEARCH_TYPE_ALL = 'track,album,artist,playlist'
-
-SPOTIFY_REDIRECT_URI = HOST_URL + '/spotify/callback'
 
 SPOTIFY_AUTHENTICATION_URL = 'https://accounts.spotify.com/authorize'
 

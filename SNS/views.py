@@ -372,7 +372,7 @@ def spotify(request):
 @login_required
 def spotify_auth_manually(request):
     
-    auth_url = spotify_data.get_authenticate_url()
+    auth_url = spotify_data.get_authenticate_url(request)
     
     return render(request, 'SNS/authenticate.html', {
         'auth_url': auth_url,
@@ -390,7 +390,7 @@ def spotify_callback(request):
             
             authenticate_code = request.GET['code']
             
-            access_token, refresh_token = spotify_data.get_access_token_authentication(authenticate_code)
+            access_token, refresh_token = spotify_data.get_access_token_authentication(authenticate_code, request)
             
             spotify_data.get_user_profile(access_token, request)
             
