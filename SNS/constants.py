@@ -1,4 +1,4 @@
-HOST_URL = 'https://music.ersteller.teraddition.com'
+HOST_URL = 'https://chorus.teraddition.com'
 
 try:
     from .local_settings import *
