@@ -21,11 +21,11 @@
             {% if success %}
                     <tr id="now-play">
                         <td><i class="fa-solid fa-music"></i></td>
-                        <td class="song-table-img"><img src="{{ now_play.album.images.0.url }}" id="img" class="new-post-song-img" alt="{{ now_play.name }}"></td>
+                        <td class="song-table-img"><img src="{{ now_play.data.album.image }}" id="img" class="new-post-song-img" alt="{{ now_play.data.song.name }}"></td>
                         <td class="song-table-title">
                             <div class="search-song-title-artist new-post-song-title-artist">
-                                <a href="{% url "SNS:song" now_play.id %}"><p class="new-post-song-title dont-new-line">{{ now_play.name }}</p>
-                                <a href="{% url "SNS:song" now_play.id %}"><p class="new-post-song-artist dont-new-line">{% for artist in now_play.artists %}{% if forloop.last %}{{ artist.name }}{% else %}{{ artist.name }}, {% endif %}{% endfor %} / {{ now_play.album.name }}</p>
+                                <a href="{% url "SNS:song" now_play.data.song.id %}"><p class="new-post-song-title dont-new-line">{{ now_play.data.song.name }}</p>
+                                <a href="{% url "SNS:song" now_play.data.song.id %}"><p class="new-post-song-artist dont-new-line">{% for artist in now_play.data.artist %}{% if forloop.last %}{{ artist.name }}{% else %}{{ artist.name }}, {% endif %}{% endfor %} / {{ now_play.data.album.name }}</p>
                             </div>
                         </td>
                     </tr>

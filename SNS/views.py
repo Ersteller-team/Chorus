@@ -332,6 +332,8 @@ def spotify(request):
             
             recent_play = spotify_data.get_recent_play(user.spotify_access_token, request, 50)
             
+            now_play = spotify_data.get_current_play(user.spotify_access_token, request)
+            
             queue = spotify_data.get_queue(user.spotify_access_token, request)
             
             if not 'currently_playing' in queue and queue['currently_playing'] == None:
@@ -345,7 +347,7 @@ def spotify(request):
             
             return render(request, 'SNS/spotify.html', {
                 'recent_play': recent_play,
-                'now_play': queue['currently_playing'],
+                'now_play': now_play,
                 'queues': queue['queue'],
                 'success': True,
                 'premium': user.spotify_premium,
