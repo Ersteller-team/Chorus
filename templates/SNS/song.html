@@ -98,7 +98,7 @@
                             {% else %}
                                 <button class="post-reaction-button like" type="button" id="good-{{ reply.id }}" onclick="good('good', '{{ reply.id }}', '{{ request.user.id }}', '{{ reply.user_id }}');"> {{ reply.good | intcomma }}</button>
                             {% endif %}
-                            {% if post.username == request.user.username %}
+                            {% if reply.username == request.user.username %}
                                 <button class="post-reaction-button edit" type="button" onclick="location.href='{% url 'SNS:post' %}?post_id={{ reply.id }}&song_id={{ response.data.0.song.id }}';"></button>
                                 <button class="post-reaction-button delete" type="button" href="{% url 'SNS:postdelete' %}?post_id={{ reply.id }}"></button>
                             {% endif %}
