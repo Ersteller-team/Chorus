@@ -18,9 +18,7 @@ def get_user_profile(access_token, request, headers = None):
     
     user = ProfileData.objects.get(user_id=request.user.id)
     
-    if user.spotify_id == None or user.spotify_id == "None":
-        
-        user.spotify_id = response['id']
+    user.spotify_id = response['id']
     
     user.spotify_premium = response['product'] == 'premium'
     

@@ -339,14 +339,13 @@ def spotify(request):
             
             now_play = spotify_data.get_current_play(user.spotify_access_token, request)
             
-            queue = spotify_data.get_queue(user.spotify_access_token, request)
-            
-            if not 'currently_playing' in queue and queue['currently_playing'] == None:
+            if now_play['status']['success'] == False:
                 
-                return render(request, 'SNS/spotify.html', {
+                return render(request, 'SNS/recent.html', {
                     'recent_play': recent_play,
-                    'success': False,
                 })
+            
+            queue = spotify_data.get_queue(user.spotify_access_token, request)
             
             recent_play['data'].reverse()
             
