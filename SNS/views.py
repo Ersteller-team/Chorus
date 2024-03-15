@@ -19,6 +19,8 @@ from .forms import AddProfileForm, ProfileForm
 
 def index(request):
     
+    HOST_URL = request._current_scheme_host
+    
     return redirect(HOST_URL + '/home/')
 
 def home(request):
@@ -113,6 +115,8 @@ def song(request, track_id):
             })
     
     elif request.method == 'POST':
+        
+        HOST_URL = request._current_scheme_host
         
         song = spotify_data.search_track_id(track_id)
         
@@ -219,6 +223,7 @@ def post(request):
         })
     
     elif request.method == 'POST':
+        HOST_URL = request._current_scheme_host
         song_id = request.POST['song']
         response = spotify_data.search_track_id(song_id)
         
@@ -355,6 +360,8 @@ def spotify(request):
     
     elif request.method == 'POST':
         
+        HOST_URL = request._current_scheme_host
+        
         method = request.POST['control']
         
         spotify_data.control(method, user.spotify_access_token, request)
@@ -374,6 +381,8 @@ def spotify_auth_manually(request):
 
 @login_required
 def spotify_callback(request):
+    
+    HOST_URL = request._current_scheme_host
     
     if request.method == 'GET':
         
@@ -533,6 +542,8 @@ def profile(request, username):
         })
     
     elif request.method == 'POST':
+        
+        HOST_URL = request._current_scheme_host
         
         opponent = request.POST['user_id']
         status = request.POST['status']
@@ -896,6 +907,8 @@ def profile_edit(request, username):
         
         elif request.method == 'POST':
             
+            HOST_URL = request._current_scheme_host
+            
             if 'icon' in request.FILES:
                 file_name = None
                 if prof.icon != 'https://music-sns.s3.ap-northeast-1.amazonaws.com/default.png':
@@ -976,6 +989,7 @@ class  AccountRegistration(TemplateView):
         return render(request,"SNS/signup.html",self.params)
     
     def post(self,request):
+        HOST_URL = request._current_scheme_host
         self.params["account_form"] = ProfileForm(data=request.POST)
         self.params["add_account_form"] = AddProfileForm(data=request.POST)
         if self.params["account_form"].is_valid() and self.params["add_account_form"].is_valid():
@@ -1011,6 +1025,7 @@ def Signin(request):
         user = authenticate(username=username, password=password)
         if user:
             if user.is_active:
+                HOST_URL = request._current_scheme_host
                 login(request, user)
                 user = ProfileData.objects.get(user_id=user.id)
                 if user.spotify_access_token != None:
@@ -1038,6 +1053,7 @@ def Signin(request):
 
 @login_required
 def Signout(request):
+    HOST_URL = request._current_scheme_host
     logout(request)
     return redirect(HOST_URL + '/signin/')
 
