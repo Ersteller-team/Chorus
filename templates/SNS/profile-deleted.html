@@ -1,0 +1,12 @@
+{% extends "SNS/layout.html" %}
+{% load static %}
+{% load humanize %}
+{% block title %}Delete Account{{ block.super }}{% endblock %}
+{% block main %}
+<div class="main" style="padding:2.5%;width:95%">
+    <h1 style="color: red;">Delete Account</h1>
+    <p>アカウントの削除が完了しました。</p>
+    <p>またのご利用をお待ちしています。</p>
+    <button class="new-post-submit" type="button" onclick="location.href = '{% url "SNS:home" %}';">ホームへ</button>
+</div>
+{% endblock %}

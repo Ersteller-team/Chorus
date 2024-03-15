@@ -8,7 +8,9 @@ from .models import *
 
 # ------------ Get Authenticate URL ---------------
 
-def get_authenticate_url():
+def get_authenticate_url(request):
+    
+    SPOTIFY_REDIRECT_URI = request._current_scheme_host + '/spotify/callback'
     
     auth_url = SPOTIFY_AUTHENTICATION_URL + '?client_id=' + SPOTIFY_CLIENT_ID + '&response_type=code&redirect_uri=' + SPOTIFY_REDIRECT_URI + '&show_dialog=true&scope=' + SPOTIFY_AUTHENTICATE_SCOPE
     
@@ -89,7 +91,9 @@ def create_header(access_token = None, request = None, lang='ja'):
 
 # ------------ Get Access Token ---------------
 
-def get_access_token_authentication(code):
+def get_access_token_authentication(code, request):
+    
+    SPOTIFY_REDIRECT_URI = request._current_scheme_host + '/spotify/callback'
     
     data = {
         'grant_type': 'authorization_code',

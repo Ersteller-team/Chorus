@@ -4,7 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}｜Music SNS{% endblock %}</title>
+    <title>{% block title %}｜Chorus{% endblock %}</title>
+    <link rel="icon" href="{% static "SNS/favicon.ico" %}" id="favicon">
+    <link rel="apple-touch-icon" href="{% static "SNS/apple-touch-icon-180x180.png" %}">
     <link rel="stylesheet" type="text/css" href="{% static 'SNS/styles-sp.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'SNS/styles-pc.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'fontawesomefree/css/fontawesome.css' %}">
@@ -18,7 +20,7 @@
             <a href="{% url 'SNS:home' %}"><span class="nav-icon"><i class="nav-icon-i fa-solid fa-house"></i><span class="nav-text">Home</span></span></a>
             <a href="{% url 'SNS:search' %}"><span class="nav-icon"><i class="fa-solid fa-magnifying-glass"></i><span class="nav-text">Search</span></span></a>
             <a href="{% url 'SNS:post' %}"><span class="nav-icon"><i class="nav-icon-i fa-solid fa-plus"></i><span class="nav-text">Post</span></span></a>
-            <a href="{% url 'SNS:spotify' %}"><span class="nav-icon"><i class="nav-icon-i fa-brands fa-spotify"></i><span class="nav-text">Spotify</span></span></a>
+            <a href="{% url 'SNS:spotify' %}#now-play"><span class="nav-icon"><i class="nav-icon-i fa-brands fa-spotify"></i><span class="nav-text">Spotify</span></span></a>
             <a href="{% url 'SNS:library_song' %}"><span class="nav-icon"><i class="fa-solid fa-book"></i><span class="nav-text"> Library</span></span></a>
             {% if user.is_authenticated %}
                 <a href="{% url 'SNS:profile' request.user.username %}"><span class="nav-icon"><img class="nav-icon-i profile-icon" src="{{ icon }}"><span class="nav-text nav-profile">Profile</span></span></a>

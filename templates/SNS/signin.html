@@ -14,10 +14,10 @@
                 </div>
                 <div class="form-content">
                     <h2>Password</h2>
-                    <input type="password" id="id_password" name="password" autocomplate="new-password" required">
+                    <input type="password" id="id_password" name="password" autocomplate="new-password" required>
                 </div>
                 <div class="signup-parent">
-                    <p>アカウントをお持ちでない場合 <u><a href="{% url 'SNS:signup' %}">Sign Up</a></u></p>
+                    <p>アカウントをお持ちでない場合 <u><a href="{% url 'SNS:signup' %}{% if next != None %}?next={{ next }}{% endif %}">Sign Up</a></u></p>
                     <input type="submit" value="Sign In" id="signup" class="new-post-submit">
                 </div>
             </form>

@@ -17,18 +17,22 @@
                         {% endif %}
                     {% endfor %}
                      / <a href="{% url "SNS:album" response.data.0.album.id %}">{{ response.data.0.album.name }}</a></p>
-                <form action="" method="post">
-                    {% csrf_token %}
-                    {% if follow %}
-                        <input type="hidden" name="status" value="true">
-                        <input type="hidden" name="song_id" value="{{ response.data.0.song.id }}">
-                        <input class="song-detail song-follow" type="submit" value="フォロー解除">
-                    {% else %}
-                        <input type="hidden" name="status" value="false">
-                        <input type="hidden" name="song_id" value="{{ response.data.0.song.id }}">
-                        <input class="song-detail song-follow" type="submit" value="楽曲をフォロー">
-                    {% endif %}
-                </form>
+                {% if user.is_authenticated %}
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        {% if follow %}
+                            <input type="hidden" name="status" value="true">
+                            <input type="hidden" name="song_id" value="{{ response.data.0.song.id }}">
+                            <input class="song-detail song-follow" type="submit" value="フォロー解除">
+                        {% else %}
+                            <input type="hidden" name="status" value="false">
+                            <input type="hidden" name="song_id" value="{{ response.data.0.song.id }}">
+                            <input class="song-detail song-follow" type="submit" value="楽曲をフォロー">
+                        {% endif %}
+                    </form>
+                {% else %}
+                <button id="search-button-tracks" class="song-detail song-follow" type="button" onclick="location.href = '{% url "SNS:signin" %}?next=/search/song/{{ response.data.0.song.id }}';">フォローにはログインが必要です</button>
+                {% endif %}
                 <p class="song-detail song-follower song-artist-album-follower">{{ followers | intcomma }}人がフォロー</p>
             </span>
             <iframe class="song-preview" src="https://open.spotify.com/embed/track/{{ response.data.0.song.id }}?utm_source=generator" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>

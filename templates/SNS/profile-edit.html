@@ -18,6 +18,7 @@
                     <textarea name="description" cols="40" rows="10" maxlength="300" id="id_description" placeholder="自己紹介を入力...">{% if profile.description != "None" %}{{ profile.description }}{% endif %}</textarea>
                 </div>
                 <div class="signup-parent">
+                    <button class="new-post-submit" style="color: red;" type="button" onclick="location.href = '{% url "SNS:profile_delete" request.user.username %}';">Delete Account</button><br>
                     <input type="submit" value="Save" id="signup" class="new-post-submit">
                 </div>
             </form>
