@@ -100,7 +100,7 @@
                             {% endif %}
                             {% if reply.username == request.user.username %}
                                 <button class="post-reaction-button edit" type="button" onclick="location.href='{% url 'SNS:post' %}?post_id={{ reply.id }}&song_id={{ response.data.0.song.id }}';"></button>
-                                <button class="post-reaction-button delete" type="button" href="{% url 'SNS:postdelete' %}?post_id={{ reply.id }}"></button>
+                                <button class="post-reaction-button delete" type="button" onclick="deletePost('{{ reply.id }}', '{{ request.user.id }}');"></button>
                             {% endif %}
                         </div>
                     </div>
