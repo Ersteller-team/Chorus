@@ -33,9 +33,9 @@
                         {% else %}
                             <button class="post-reaction-button like" type="button" id="good-{{ post.id }}" onclick="good('good', '{{ post.id }}', '{{ request.user.id }}', '{{ post.user_id }}');"> {{ post.good | intcomma }}</button>
                         {% endif %}
-                        <button class="post-reaction-button comment" type="button" onclick="location.href='{% url 'SNS:post' %}?reply_to={{ post.id }}&song_id={{ response.data.0.song.id }}';"> {{ post.replies | length }}</button>
+                        <button class="post-reaction-button comment" type="button" onclick="location.href='{% url 'SNS:post' %}?reply_to={{ post.id }}&song_id={{ post.song_id }}';"> {{ post.replies | length }}</button>
                         {% if post.username == request.user.username %}
-                            <button class="post-reaction-button edit" type="button" onclick="location.href='{% url 'SNS:post' %}?post_id={{ post.id }}&song_id={{ response.data.0.song.id }}';"></button>
+                            <button class="post-reaction-button edit" type="button" onclick="location.href='{% url 'SNS:post' %}?post_id={{ post.id }}&song_id={{ post.song_id }}';"></button>
                             <button class="post-reaction-button delete" type="button" onclick="deletePost('{{ post.id }}', '{{ request.user.id }}');"></button>
                         {% endif %}
                     </div>
